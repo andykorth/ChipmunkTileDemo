@@ -1,21 +1,37 @@
 //
 //  HelloWorldLayer.h
-//  ChipmunkTiles3
+//  TiledChipmunk
 //
-//  Created by Andy Korth on 6/8/12.
+//  Created by Andy Korth on 6/7/12.
 //  Copyright Howling Moon Software 2012. All rights reserved.
 //
 
 
-#import <GameKit/GameKit.h>
-
 // When you import this file, you import all the cocos2d classes
 #import "cocos2d.h"
+#import "ObjectiveChipmunk.h"
 
 // HelloWorldLayer
-@interface HelloWorldLayer : CCLayer <GKAchievementViewControllerDelegate, GKLeaderboardViewControllerDelegate>
+@interface HelloWorldLayer : CCLayer
 {
+    // Inside the HelloWorld class declaration
+    CCTMXTiledMap *_tileMap;
+    CCTMXLayer *_background;
+    
+    CCTMXLayer *_meta;
+    
+    
+    CCSprite *_player;
+    
+    
 }
+// After the class declaration
+@property (nonatomic, retain) CCTMXTiledMap *tileMap;
+@property (nonatomic, retain) CCTMXLayer *background;
+
+@property (nonatomic, retain) CCSprite *player;
+
+@property (nonatomic, retain) CCTMXLayer *meta;
 
 // returns a CCScene that contains the HelloWorldLayer as the only child
 +(CCScene *) scene;
