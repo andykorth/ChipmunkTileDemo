@@ -167,8 +167,6 @@
         NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
         int x = [[spawnPoint valueForKey:@"x"] intValue];
         int y = [[spawnPoint valueForKey:@"y"] intValue];
-        x = 10;
-        y = 10;
         
         self.meta = [_tileMap layerNamed:@"Meta"];
         _meta.visible = NO;
@@ -197,14 +195,14 @@
             // motion based on the control body
             
             targetPointBody = [[ChipmunkBody alloc] initStaticBody];
-            targetPointBody.pos = playerBody.pos; // line them up or the joint won't be what we expected.
-
-            ChipmunkPivotJoint* joint = [ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody pivot:cpvzero];
+            targetPointBody.pos = ccp(x,y); // line them up so the initial position is right
+            
+            ChipmunkPivotJoint* joint = [ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero];
 
             // max bias controls the maximum speed that a joint can be corrected at. So that means 
             // the player body won't be forced towards the control at a speed higher than this.
             // Thus it's essentially the speed of the player's motion
-            joint.maxBias = 40.0f;
+            joint.maxBias = 85.0f;
             
             // limiting the force will prevent us from crazily pushing huge piles
             // of heavy things. and give us a sort of top-down friction.
@@ -217,7 +215,8 @@
         // add some crates, it's not a video game without crates!
         for(int i=0; i<16; i++){
             float mass = 0.3f;
-            float size = 10.0f;
+            float size = 18.0f;
+            float dist = 50.0f;
             
             ChipmunkBody* body = [ChipmunkBody bodyWithMass:mass andMoment:cpMomentForBox(mass, size, size)];
             ChipmunkShape* box = [ChipmunkPolyShape boxWithBody:body width: size height: size];
@@ -226,7 +225,7 @@
             [space add:box];
             [space add:body];
             
-            body.pos = cpv(x - 60.0f + (i % 4) * 30, y - 60.0f +( i / 4) * 30);
+            body.pos = cpv(x - (dist*2) + (i % 4) * dist, y - (dist*2) +( i / 4) * dist);
         
         }
                 
