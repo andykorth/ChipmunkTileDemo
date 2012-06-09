@@ -493,7 +493,6 @@
 		75FC9D0715828BFA00E5396A = {
 			isa = PBXGroup;
 			children = (
-				75FC9EFC1582965800E5396A /* ImageIO.framework */,
 				75FC9D2815828BFA00E5396A /* ChipmunkTiles3 */,
 				75FC9D1515828BFA00E5396A /* Frameworks */,
 				75FC9D1315828BFA00E5396A /* Products */,
@@ -511,6 +510,7 @@
 		75FC9D1515828BFA00E5396A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				75FC9EFC1582965800E5396A /* ImageIO.framework */,
 				75FC9D1615828BFA00E5396A /* QuartzCore.framework */,
 				75FC9D1815828BFA00E5396A /* OpenGLES.framework */,
 				75FC9D1A15828BFA00E5396A /* OpenAL.framework */,
@@ -1289,6 +1289,7 @@
 				75FC9EA815828BFD00E5396A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

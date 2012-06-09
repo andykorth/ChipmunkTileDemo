@@ -150,89 +150,101 @@
 	// Apple recommends to re-assign "self" with the "super" return value
 	if( (self=[super init])) {
 		
-        // Setup the space. We won't set a gravity vector since this is top-down
+		// Setup the space. We won't set a gravity vector since this is top-down
 		space = [[ChipmunkSpace alloc] init];
-        
-        
-        self.isTouchEnabled = YES;
-        
-        self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"andy.tmx"];
-        self.background = [_tileMap layerNamed:@"Background"];
-        
-        [self addChild:_tileMap z:-1];
-        
-        CCTMXObjectGroup *objects = [_tileMap objectGroupNamed:@"Objects"];
-        NSAssert(objects != nil, @"'Objects' object group not found");
-        NSMutableDictionary *spawnPoint = [objects objectNamed:@"SpawnPoint"];        
-        NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
-        int x = [[spawnPoint valueForKey:@"x"] intValue];
-        int y = [[spawnPoint valueForKey:@"y"] intValue];
-        
-        self.meta = [_tileMap layerNamed:@"Meta"];
-        _meta.visible = NO;
-        
-        self.player = [CCSprite spriteWithFile:@"chipmunkMan.png"];
-        _player.position = ccp(x, y);
-        [self addChild:_player]; 
-        
-        // Add a ChipmunkDebugNode to draw the space.
+		
+		
+		self.isTouchEnabled = YES;
+		
+		self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"andy.tmx"];
+		self.background = [_tileMap layerNamed:@"Background"];
+		
+		[self addChild:_tileMap z:-1];
+		
+		CCTMXObjectGroup *objects = [_tileMap objectGroupNamed:@"Objects"];
+		NSAssert(objects != nil, @"'Objects' object group not found");
+		NSMutableDictionary *spawnPoint = [objects objectNamed:@"SpawnPoint"];        
+		NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
+		int x = [[spawnPoint valueForKey:@"x"] intValue];
+		int y = [[spawnPoint valueForKey:@"y"] intValue];
+		
+		self.meta = [_tileMap layerNamed:@"Meta"];
+		_meta.visible = NO;
+		
+		self.player = [CCSprite spriteWithFile:@"chipmunkMan.png"];
+		_player.position = ccp(x, y);
+		[self addChild:_player]; 
+		
+		// Add a ChipmunkDebugNode to draw the space.
 		ChipmunkDebugNode *debugNode = [ChipmunkDebugNode debugNodeForChipmunkSpace:space];
 		[self addChild:debugNode];
-        
-        {
-            
-            // set up the player body and shape
-            float playerMass = 1.0f;
-            float playerRadius = 13.0f;
-            
-            playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:cpMomentForCircle(playerMass, 0.0, playerRadius, cpvzero)]];
-            playerBody.pos = ccp(x,y);
-            
-            ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
-            playerShape.friction = 1.0;
+				
+		{
+				
+				// set up the player body and shape
+				float playerMass = 1.0f;
+				float playerRadius = 13.0f;
+				
+				playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:cpMomentForCircle(playerMass, 0.0, playerRadius, cpvzero)]];
+				playerBody.pos = ccp(x,y);
+				
+				ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
+				playerShape.friction = 1.0;
 
-            // now create a control body. We'll move this around and use joints to do the actual player 
-            // motion based on the control body
-            
-            targetPointBody = [[ChipmunkBody alloc] initStaticBody];
-            targetPointBody.pos = ccp(x,y); // line them up so the initial position is right
-            
-            ChipmunkPivotJoint* joint = [ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero];
+				// now create a control body. We'll move this around and use joints to do the actual player 
+				// motion based on the control body
+				
+				targetPointBody = [[ChipmunkBody alloc] initStaticBody];
+				targetPointBody.pos = ccp(x,y); // line them up so the initial position is right
+				
+				ChipmunkPivotJoint* joint = [ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero];
 
-            // max bias controls the maximum speed that a joint can be corrected at. So that means 
-            // the player body won't be forced towards the control at a speed higher than this.
-            // Thus it's essentially the speed of the player's motion
-            joint.maxBias = 85.0f;
-            
-            // limiting the force will prevent us from crazily pushing huge piles
-            // of heavy things. and give us a sort of top-down friction.
-            joint.maxForce = 3000.0f; 
-            
-            [space add: joint];
-            
-        }
-        
-        // add some crates, it's not a video game without crates!
-        for(int i=0; i<16; i++){
-            float mass = 0.3f;
-            float size = 18.0f;
-            float dist = 50.0f;
-            
-            ChipmunkBody* body = [ChipmunkBody bodyWithMass:mass andMoment:cpMomentForBox(mass, size, size)];
-            ChipmunkShape* box = [ChipmunkPolyShape boxWithBody:body width: size height: size];
-            box.friction = 1.0f;
-            
-            [space add:box];
-            [space add:body];
-            
-            body.pos = cpv(x - (dist*2) + (i % 4) * dist, y - (dist*2) +( i / 4) * dist);
-        
-        }
-                
-        [self setViewpointCenter:_player.position];
-        
-        // schedule updates, whihc also steps the physics space:
-        [self scheduleUpdate];
+				// max bias controls the maximum speed that a joint can be corrected at. So that means 
+				// the player body won't be forced towards the control at a speed higher than this.
+				// Thus it's essentially the speed of the player's motion
+				joint.maxBias = 85.0f;
+				
+				// limiting the force will prevent us from crazily pushing huge piles
+				// of heavy things. and give us a sort of top-down friction.
+				joint.maxForce = 3000.0f; 
+				
+				[space add: joint];
+				
+		}
+		
+		// add some crates, it's not a video game without crates!
+		for(int i=0; i<16; i++){
+			float mass = 0.3f;
+			float size = 18.0f;
+			float dist = 50.0f;
+
+			ChipmunkBody* body = [ChipmunkBody bodyWithMass:mass andMoment:cpMomentForBox(mass, size, size)];
+			ChipmunkShape* box = [ChipmunkPolyShape boxWithBody:body width: size height: size];
+			box.friction = 1.0f;
+
+			[space add:box];
+			[space add:body];
+
+			body.pos = cpv(x - (dist*2) + (i % 4) * dist, y - (dist*2) +( i / 4) * dist);
+
+			//create joints to simulate a top-down linear friction
+			// We'll need a set of joints like this on anything we want to have our top-down friction.
+			ChipmunkPivotJoint* pj = [space add: [ChipmunkPivotJoint pivotJointWithBodyA:[space staticBody] bodyB:body anchr1:cpvzero anchr2:cpvzero]];
+			pj.maxForce = 1000.0f; // emulate linear friction
+			pj.maxBias = 0; // disable joint correction, don't pull it towards the anchor.
+
+			// Then use a gear to fake an angular friction (slow rotating boxes)
+			ChipmunkGearJoint* gj = [space add: [ChipmunkGearJoint gearJointWithBodyA:[space staticBody] bodyB:body phase:0.0f ratio:1.0f]];
+										
+			gj.maxForce = 5000.0f;
+			gj.maxBias = 0.0f;
+			
+		}
+						
+		[self setViewpointCenter:_player.position];
+		
+		// schedule updates, whihc also steps the physics space:
+		[self scheduleUpdate];
 	}
     
 	return self;
