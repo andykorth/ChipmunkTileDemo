@@ -20,6 +20,8 @@
     ChipmunkSpace *space;
     ChipmunkBody *targetPointBody;
     ChipmunkBody *playerBody;
+	
+		//NSMutableArray* chipmunkSprites;
 }
 
 
@@ -139,8 +141,35 @@
     }
     
     targetPointBody.pos = touchLocation;
+}
+
+- (ChipmunkBody*)makeBox:(int)i y:(int)y x:(int)x
+{
+    float mass = 0.3f;
+    float size = 18.0f;
+    float dist = 50.0f;
     
- 
+    ChipmunkBody* body = [ChipmunkBody bodyWithMass:mass andMoment:cpMomentForBox(mass, size, size)];
+    ChipmunkShape* box = [ChipmunkPolyShape boxWithBody:body width: size height: size];
+    box.friction = 1.0f;
+    
+    [space add:box];
+    [space add:body];
+    
+    body.pos = cpv(x - (dist*2) + (i % 4) * dist, y - (dist*2) +( i / 4) * dist);
+    
+    //create joints to simulate a top-down linear friction
+    // We'll need a set of joints like this on anything we want to have our top-down friction.
+    ChipmunkPivotJoint* pj = [space add: [ChipmunkPivotJoint pivotJointWithBodyA:[space staticBody] bodyB:body anchr1:cpvzero anchr2:cpvzero]];
+    pj.maxForce = 1000.0f; // emulate linear friction
+    pj.maxBias = 0; // disable joint correction, don't pull it towards the anchor.
+    
+    // Then use a gear to fake an angular friction (slow rotating boxes)
+    ChipmunkGearJoint* gj = [space add: [ChipmunkGearJoint gearJointWithBodyA:[space staticBody] bodyB:body phase:0.0f ratio:1.0f]];
+    
+    gj.maxForce = 5000.0f;
+    gj.maxBias = 0.0f;
+	return body;
 }
 
 // on "init" you need to initialize your instance
@@ -171,7 +200,7 @@
 		self.meta = [_tileMap layerNamed:@"Meta"];
 		_meta.visible = NO;
 		
-		self.player = [CCSprite spriteWithFile:@"chipmunkMan.png"];
+		self.player = [ChipmunkSprite spriteWithFile:@"chipmunkMan.png"];
 		_player.position = ccp(x, y);
 		[self addChild:_player]; 
 		
@@ -187,7 +216,8 @@
 				
 				playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:cpMomentForCircle(playerMass, 0.0, playerRadius, cpvzero)]];
 				playerBody.pos = ccp(x,y);
-				
+				_player.chipmunkBody = playerBody;
+				 
 				ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
 				playerShape.friction = 1.0;
 
@@ -214,30 +244,8 @@
 		
 		// add some crates, it's not a video game without crates!
 		for(int i=0; i<16; i++){
-			float mass = 0.3f;
-			float size = 18.0f;
-			float dist = 50.0f;
-
-			ChipmunkBody* body = [ChipmunkBody bodyWithMass:mass andMoment:cpMomentForBox(mass, size, size)];
-			ChipmunkShape* box = [ChipmunkPolyShape boxWithBody:body width: size height: size];
-			box.friction = 1.0f;
-
-			[space add:box];
-			[space add:body];
-
-			body.pos = cpv(x - (dist*2) + (i % 4) * dist, y - (dist*2) +( i / 4) * dist);
-
-			//create joints to simulate a top-down linear friction
-			// We'll need a set of joints like this on anything we want to have our top-down friction.
-			ChipmunkPivotJoint* pj = [space add: [ChipmunkPivotJoint pivotJointWithBodyA:[space staticBody] bodyB:body anchr1:cpvzero anchr2:cpvzero]];
-			pj.maxForce = 1000.0f; // emulate linear friction
-			pj.maxBias = 0; // disable joint correction, don't pull it towards the anchor.
-
-			// Then use a gear to fake an angular friction (slow rotating boxes)
-			ChipmunkGearJoint* gj = [space add: [ChipmunkGearJoint gearJointWithBodyA:[space staticBody] bodyB:body phase:0.0f ratio:1.0f]];
-										
-			gj.maxForce = 5000.0f;
-			gj.maxBias = 0.0f;
+			
+			ChipmunkBody* box = [self makeBox:i y:y x:x];
 			
 		}
 						
@@ -257,8 +265,6 @@
 	ccTime fixed_dt = [CCDirector sharedDirector].animationInterval;
 	[space step:fixed_dt];
     
-    _player.position = playerBody.pos;
-    
     //update camera
     [self setViewpointCenter:playerBody.pos];
     
@@ -272,9 +278,9 @@
 	// in this particular example nothing needs to be released.
 	// cocos2d will automatically release all the children (Label)
 	self.tileMap = nil;
-    self.background = nil;
-    self.meta = nil;
-    self.player = nil;
+	self.background = nil;
+	self.meta = nil;
+	self.player = nil;
     
 	// don't forget to call "super dealloc"
 	[super dealloc];

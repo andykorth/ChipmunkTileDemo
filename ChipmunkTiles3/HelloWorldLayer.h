@@ -10,6 +10,7 @@
 // When you import this file, you import all the cocos2d classes
 #import "cocos2d.h"
 #import "ObjectiveChipmunk.h"
+#import "ChipmunkSprite.h"
 
 // HelloWorldLayer
 @interface HelloWorldLayer : CCLayer
@@ -21,7 +22,7 @@
     CCTMXLayer *_meta;
     
     
-    CCSprite *_player;
+    ChipmunkSprite *_player;
     
     
 }
