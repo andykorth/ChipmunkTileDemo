@@ -30,7 +30,7 @@
 @property (nonatomic, retain) CCTMXTiledMap *tileMap;
 @property (nonatomic, retain) CCTMXLayer *background;
 
-@property (nonatomic, retain) CCSprite *player;
+@property (nonatomic, retain) ChipmunkSprite *player;
 
 @property (nonatomic, retain) CCTMXLayer *meta;
 

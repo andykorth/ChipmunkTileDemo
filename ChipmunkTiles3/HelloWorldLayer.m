@@ -200,9 +200,6 @@
 		self.meta = [_tileMap layerNamed:@"Meta"];
 		_meta.visible = NO;
 		
-		self.player = [ChipmunkSprite spriteWithFile:@"chipmunkMan.png"];
-		_player.position = ccp(x, y);
-		[self addChild:_player]; 
 		
 		// Add a ChipmunkDebugNode to draw the space.
 		ChipmunkDebugNode *debugNode = [ChipmunkDebugNode debugNodeForChipmunkSpace:space];
@@ -215,9 +212,12 @@
 				float playerRadius = 13.0f;
 				
 				playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:cpMomentForCircle(playerMass, 0.0, playerRadius, cpvzero)]];
+				
+				self.player = [ChipmunkSprite spriteWithFile:@"chipmunkMan.png"];
+				self.player.chipmunkBody = playerBody;
 				playerBody.pos = ccp(x,y);
-				_player.chipmunkBody = playerBody;
-				 
+				_player.position = ccp(x,y);
+			
 				ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
 				playerShape.friction = 1.0;
 
