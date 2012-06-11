@@ -21,7 +21,7 @@
     ChipmunkBody *targetPointBody;
     ChipmunkBody *playerBody;
 	
-		//NSMutableArray* chipmunkSprites;
+	//NSMutableArray* chipmunkSprites;
 }
 
 
