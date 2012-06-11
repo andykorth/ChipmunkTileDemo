@@ -15,6 +15,47 @@
 #import "ChipmunkDebugNode.h"
 #import "ChipmunkPointCloudSampler.h"
 
+@interface ChipmunkTilemapSampler : ChipmunkBlockSampler
+
+
+@end
+
+@implementation ChipmunkTilemapSampler
+
+/*
+static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
+{    
+    float tileW = self.tileMap.tileSize.width;
+    float tileH = self.tileMap.tileSize.height;
+    
+    // Look up the tile to see if we set a Collidable property in the Tileset meta layer
+    int tileGid = [_meta tileGIDAt:ccp(point.w / tileW, point.y/ tileH)];
+    if (tileGid) {
+        NSDictionary *properties = [_tileMap propertiesForGID:tileGid];
+        if (properties) {
+            NSString *collision = [properties valueForKey:@"Collidable"];
+            if (collision && [collision compare:@"True"] == NSOrderedSame) {
+                // This tile is collidable, add the point to Chipmunk's sampler:
+                return 1.0f;
+            }
+        }
+    }
+    return 0.0f;
+    
+}
+
+
+-(id)initWithTileMap:(CCTMXTiledMap*) tileMap
+{
+	if((self = [super initWithSamplingFunction:(cpMarchSampleFunc)SampleFuncTileMap])){
+		// fill in some crap
+	}
+    
+	return self;
+}
+*/
+@end
+
 // HelloWorldLayer implementation
 @implementation HelloWorldLayer{
     
@@ -173,6 +214,38 @@
 	return body;
 }
 
+static CCTMXTiledMap *staticTileMap;
+static CCTMXLayer *staticMetaMap;
+
+
+static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
+{    
+    int tileW = staticTileMap.tileSize.width;
+    int tileH = staticTileMap.tileSize.height;
+    
+    int tileX = (point.x+16) / tileW ;
+    int tileY = staticMetaMap.layerSize.height - ((point.y + 16)  / tileH) ;
+    
+    if( tileX >= staticMetaMap.layerSize.width || tileY >= staticMetaMap.layerSize.height || tileX < 0 || tileY <0){
+        return 1.0f; //for spaces outside of the map, create collision geometry.
+    }
+    
+    // Look up the tile to see if we set a Collidable property in the Tileset meta layer
+    int tileGid = [staticMetaMap tileGIDAt:ccp(tileX, tileY)];
+    if (tileGid) {
+        NSDictionary *properties = [staticTileMap propertiesForGID:tileGid];
+        if (properties) {
+            NSString *collision = [properties valueForKey:@"Collidable"];
+            if (collision && [collision compare:@"True"] == NSOrderedSame) {
+                // This tile is collidable, add the point to Chipmunk's sampler:
+                return 1.0f;
+            }
+        }
+    }
+    return 0.0f;
+    
+}
+
 // on "init" you need to initialize your instance
 -(id) init
 {
@@ -233,7 +306,7 @@
 				// max bias controls the maximum speed that a joint can be corrected at. So that means 
 				// the player body won't be forced towards the control at a speed higher than this.
 				// Thus it's essentially the speed of the player's motion
-				joint.maxBias = 85.0f;
+				joint.maxBias = 200.0f;
 				
 				// limiting the force will prevent us from crazily pushing huge piles
 				// of heavy things. and give us a sort of top-down friction.
@@ -252,38 +325,41 @@
             int tileCountW = _meta.layerSize.width;
             int tileCountH = _meta.layerSize.height;
             
-            ChipmunkPointCloudSampler* sampler = [[ChipmunkPointCloudSampler alloc] initWithCellSize:tileW];
+            staticTileMap = _tileMap;
+            staticMetaMap = _meta;
+
             
-            // for each tile in the grid..
-            for(int i = 0; i < tileCountW; i++){
-                for(int j = 0; j < tileCountH; j++){
-                    
-                    // Look up the tile to see if we set a Collidable property in the Tileset meta layer
-                    int tileGid = [_meta tileGIDAt:ccp(i, j)];
-                    if (tileGid) {
-                        NSDictionary *properties = [_tileMap propertiesForGID:tileGid];
-                        if (properties) {
-                            NSString *collision = [properties valueForKey:@"Collidable"];
-                            if (collision && [collision compare:@"True"] == NSOrderedSame) {
-                                // This tile is collidable, add the point to Chipmunk's sampler:
-                                
-                                [sampler addPoint:cpv(i*tileW,j*tileH) radius:tileW fuzz:0.5f];
-                            }
-                        }
-                    }
-                    
-                }
-            }
+            ChipmunkBlockSampler* sampler = [[ChipmunkBlockSampler alloc] initWithSamplingFunction: (cpMarchSampleFunc) SampleFuncTileMap];
+           
+            // The output rectangle should be inset slightly so that we sample tile centers, not edges.
+            // This along with the tileOffset below will make sure the tiles line up with the geometry perfectly.
+            //sampler.outputRect = cpBBNew(tileW / 2.0f, tileH / 2.0f, tileW*tileCountW - tileW / 2.0f, tileH*tileCountH - tileH / 2.0f);
             
             ChipmunkPolylineSet * polylines = [sampler march:cpBBNew(0, 0, tileW*tileCountW, tileH*tileCountH) xSamples:tileCountW ySamples:tileCountH hard:TRUE];
-  
+            
+            for(ChipmunkPolyline * line in polylines){
+                // Simplify the line data to ignore details smaller than a tile (or part of one maybe).
+                ChipmunkPolyline * simplified = [line simplifyCurves:1.0f];
+
+                // separate line into segments.
+                for(int i=0; i<simplified.count-1; i++){
+                    cpVect a = simplified.verts[i];
+                    cpVect b = simplified.verts[i+1];
+                    
+                    ChipmunkShape *seg = [ChipmunkSegmentShape segmentWithBody:space.staticBody from:a to:b radius:1.0f];
+                    seg.friction = 1.0;
+                    [space add:seg];
+                }
+            }
+
             
         }
 		
 		// add some crates, it's not a video game without crates!
 		for(int i=0; i<16; i++){
 			
-			ChipmunkBody* box = [self makeBox:i y:y x:x];
+			//ChipmunkBody* box = 
+            [self makeBox:i y:y x:x];
 			
 		}
 						
