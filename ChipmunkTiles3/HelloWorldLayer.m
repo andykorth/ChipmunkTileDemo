@@ -13,6 +13,7 @@
 #import "ChipmunkAutoGeometry.h"
 #import "ChipmunkGLRenderBufferSampler.h"
 #import "ChipmunkDebugNode.h"
+#import "ChipmunkPointCloudSampler.h"
 
 // HelloWorldLayer implementation
 @implementation HelloWorldLayer{
@@ -241,6 +242,43 @@
 				[space add: joint];
 				
 		}
+        
+        {
+            // add tile geometry data using ChipmunkPointCloudSampler
+            
+            int tileW = _tileMap.tileSize.width;
+            int tileH = _tileMap.tileSize.height;
+            
+            int tileCountW = _meta.layerSize.width;
+            int tileCountH = _meta.layerSize.height;
+            
+            ChipmunkPointCloudSampler* sampler = [[ChipmunkPointCloudSampler alloc] initWithCellSize:tileW];
+            
+            // for each tile in the grid..
+            for(int i = 0; i < tileCountW; i++){
+                for(int j = 0; j < tileCountH; j++){
+                    
+                    // Look up the tile to see if we set a Collidable property in the Tileset meta layer
+                    int tileGid = [_meta tileGIDAt:ccp(i, j)];
+                    if (tileGid) {
+                        NSDictionary *properties = [_tileMap propertiesForGID:tileGid];
+                        if (properties) {
+                            NSString *collision = [properties valueForKey:@"Collidable"];
+                            if (collision && [collision compare:@"True"] == NSOrderedSame) {
+                                // This tile is collidable, add the point to Chipmunk's sampler:
+                                
+                                [sampler addPoint:cpv(i*tileW,j*tileH) radius:tileW fuzz:0.5f];
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            
+            ChipmunkPolylineSet * polylines = [sampler march:cpBBNew(0, 0, tileW*tileCountW, tileH*tileCountH) xSamples:tileCountW ySamples:tileCountH hard:TRUE];
+  
+            
+        }
 		
 		// add some crates, it's not a video game without crates!
 		for(int i=0; i<16; i++){
