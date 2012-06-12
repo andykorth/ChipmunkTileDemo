@@ -214,17 +214,43 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 	return body;
 }
 
+// Much faster than (int)floor(f)
+// Profiling showed floor() to be a sizable performance hog
+static inline int
+floor_int(cpFloat f)
+{
+	int i = (int)f;
+	return (f < 0.0f && f != i ? i - 1 : i);
+}
+
 static CCTMXTiledMap *staticTileMap;
 static CCTMXLayer *staticMetaMap;
 
 
 static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 {    
+    
     int tileW = staticTileMap.tileSize.width;
     int tileH = staticTileMap.tileSize.height;
     
-    int tileX = (point.x+16) / tileW ;
-    int tileY = staticMetaMap.layerSize.height - ((point.y + 16)  / tileH) ;
+    int mapSizeWidth = staticMetaMap.layerSize.width * tileW;
+    int mapSizeHeight = staticMetaMap.layerSize.height * tileH;
+    
+    float w = tileW/2.0f;
+    float h = tileH/2.0f;
+    
+    // first clamp our sampling function.
+    cpBB bb = cpBBNew(0, 0, mapSizeWidth,  mapSizeWidth);
+    cpVect clamped = cpBBClampVect(bb, point);
+    
+    int x = floor_int((mapSizeWidth - tileW)*(clamped.x - bb.l )/(bb.r - bb.l));
+    int y = floor_int((mapSizeHeight - tileH)*(clamped.y - bb.b)/(bb.t - bb.b));
+
+    // now look up the value in the tile map:
+    int tileX = x / tileW ;
+    int tileY = staticMetaMap.layerSize.height - (y  / tileH) - 1 ; //we flip the y
+    
+    ///NSLog(@"Sampling at %f, %f to %d, %d", point.x, point.y, tileX, tileY );
     
     if( tileX >= staticMetaMap.layerSize.width || tileY >= staticMetaMap.layerSize.height || tileX < 0 || tileY <0){
         return 1.0f; //for spaces outside of the map, create collision geometry.
@@ -316,9 +342,7 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 				
 		}
         
-        {
-            // add tile geometry data using ChipmunkPointCloudSampler
-            
+        {            
             int tileW = _tileMap.tileSize.width;
             int tileH = _tileMap.tileSize.height;
             
@@ -330,12 +354,12 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 
             
             ChipmunkBlockSampler* sampler = [[ChipmunkBlockSampler alloc] initWithSamplingFunction: (cpMarchSampleFunc) SampleFuncTileMap];
-           
+         
             // The output rectangle should be inset slightly so that we sample tile centers, not edges.
             // This along with the tileOffset below will make sure the tiles line up with the geometry perfectly.
             //sampler.outputRect = cpBBNew(tileW / 2.0f, tileH / 2.0f, tileW*tileCountW - tileW / 2.0f, tileH*tileCountH - tileH / 2.0f);
             
-            ChipmunkPolylineSet * polylines = [sampler march:cpBBNew(0, 0, tileW*tileCountW, tileH*tileCountH) xSamples:tileCountW ySamples:tileCountH hard:TRUE];
+            ChipmunkPolylineSet * polylines = [sampler march:cpBBNew(0, 0, tileW*tileCountW, tileH*tileCountH) xSamples:tileH*tileCountH ySamples:tileH*tileCountH hard:TRUE];
             
             for(ChipmunkPolyline * line in polylines){
                 // Simplify the line data to ignore details smaller than a tile (or part of one maybe).
