@@ -41,13 +41,13 @@
 
 static ccColor4F ColorForBody(cpBody *body)
 {
-	if(cpBodyIsStatic(body) || cpBodyIsSleeping(body)){
-		return ccc4f(0.5, 0.5, 0.5 ,0.5);
-	} else if(body->node.idleTime > body->space->sleepTimeThreshold) {
-		return ccc4f(0.33, 0.33, 0.33, 0.5);
-	} else {
+//	if(cpBodyIsStatic(body) || cpBodyIsSleeping(body)){
+//		return ccc4f(0.5, 0.5, 0.5 ,0.5);
+//	} else if(body->node.idleTime > body->space->sleepTimeThreshold) {
+//		return ccc4f(0.33, 0.33, 0.33, 0.5);
+//	} else {
 		return ccc4f(1, 0, 0, 0.5);
-	}
+//	}
 }
 
 static void

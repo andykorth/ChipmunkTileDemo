@@ -214,64 +214,6 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 	return body;
 }
 
-// Much faster than (int)floor(f)
-// Profiling showed floor() to be a sizable performance hog
-static inline int
-floor_int(cpFloat f)
-{
-	int i = (int)f;
-	return (f < 0.0f && f != i ? i - 1 : i);
-}
-
-static CCTMXTiledMap *staticTileMap;
-static CCTMXLayer *staticMetaMap;
-
-
-static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
-{    
-    
-    int tileW = staticTileMap.tileSize.width;
-    int tileH = staticTileMap.tileSize.height;
-    
-    int mapSizeWidth = staticMetaMap.layerSize.width * tileW;
-    int mapSizeHeight = staticMetaMap.layerSize.height * tileH;
-    
-    float w = tileW/2.0f;
-    float h = tileH/2.0f;
-    
-    // first clamp our sampling function.
-    cpBB bb = cpBBNew(0, 0, mapSizeWidth,  mapSizeWidth);
-    cpVect clamped = cpBBClampVect(bb, point);
-    
-    int x = floor_int((mapSizeWidth - tileW)*(clamped.x - bb.l )/(bb.r - bb.l));
-    int y = floor_int((mapSizeHeight - tileH)*(clamped.y - bb.b)/(bb.t - bb.b));
-
-    // now look up the value in the tile map:
-    int tileX = x / tileW ;
-    int tileY = staticMetaMap.layerSize.height - (y  / tileH) - 1 ; //we flip the y
-    
-    ///NSLog(@"Sampling at %f, %f to %d, %d", point.x, point.y, tileX, tileY );
-    
-    if( tileX >= staticMetaMap.layerSize.width || tileY >= staticMetaMap.layerSize.height || tileX < 0 || tileY <0){
-        return 1.0f; //for spaces outside of the map, create collision geometry.
-    }
-    
-    // Look up the tile to see if we set a Collidable property in the Tileset meta layer
-    int tileGid = [staticMetaMap tileGIDAt:ccp(tileX, tileY)];
-    if (tileGid) {
-        NSDictionary *properties = [staticTileMap propertiesForGID:tileGid];
-        if (properties) {
-            NSString *collision = [properties valueForKey:@"Collidable"];
-            if (collision && [collision compare:@"True"] == NSOrderedSame) {
-                // This tile is collidable, add the point to Chipmunk's sampler:
-                return 1.0f;
-            }
-        }
-    }
-    return 0.0f;
-    
-}
-
 // on "init" you need to initialize your instance
 -(id) init
 {
@@ -311,7 +253,7 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 				float playerMass = 1.0f;
 				float playerRadius = 13.0f;
 				
-				playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:cpMomentForCircle(playerMass, 0.0, playerRadius, cpvzero)]];
+				playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:INFINITY]];
 				
 				self.player = [ChipmunkSprite spriteWithFile:@"chipmunkMan.png"];
 				self.player.chipmunkBody = playerBody;
@@ -319,7 +261,7 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 				_player.position = ccp(x,y);
 			
 				ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
-				playerShape.friction = 1.0;
+				playerShape.friction = 0.1;
 
 				// now create a control body. We'll move this around and use joints to do the actual player 
 				// motion based on the control body
@@ -327,7 +269,7 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 				targetPointBody = [[ChipmunkBody alloc] initStaticBody];
 				targetPointBody.pos = ccp(x,y); // line them up so the initial position is right
 				
-				ChipmunkPivotJoint* joint = [ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero];
+				ChipmunkPivotJoint* joint = [space add:[ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero]];
 
 				// max bias controls the maximum speed that a joint can be corrected at. So that means 
 				// the player body won't be forced towards the control at a speed higher than this.
@@ -337,42 +279,51 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 				// limiting the force will prevent us from crazily pushing huge piles
 				// of heavy things. and give us a sort of top-down friction.
 				joint.maxForce = 3000.0f; 
-				
-				[space add: joint];
-				
 		}
         
         {            
-            int tileW = _tileMap.tileSize.width;
-            int tileH = _tileMap.tileSize.height;
-            
             int tileCountW = _meta.layerSize.width;
             int tileCountH = _meta.layerSize.height;
+			
+			ChipmunkBlockSampler *sampler = [[ChipmunkBlockSampler alloc] initWithBlock:^(cpVect point){
+				// Clamp the point so that samples outside the tilemap bounds will sample the edges.
+				// See below for why 0.5 is used here.
+				point = cpBBClampVect(cpBBNew(0.5, 0.5, tileCountW - 0.5, tileCountH - 0.5), point);
+				int x = (int)point.x;
+				int y = (int)point.y;
+				
+				// Flip the y-coord (the tilemap coords are flipped this way)
+				y = tileCountH - 1 - y;
+				
+				// Look up the tile to see if we set a Collidable property in the Tileset meta layer
+				NSDictionary *properties = [_tileMap propertiesForGID:[_meta tileGIDAt:ccp(x, y)]];
+				BOOL collidable = [[properties valueForKey:@"Collidable"] isEqualToString:@"True"];
+				
+				// If the tile is collidable, return a density of 1.0 (meaning solid)
+				// Otherwise return a density of 0.0 meaning completely open.
+				return (collidable ? 1.0f : 0.0f);
+			}];
+			
+			cpBB sampleRect = cpBBNew(-0.5, -0.5, tileCountW + 0.5, tileCountH + 0.5);
+            ChipmunkPolylineSet * polylines = [sampler march:sampleRect xSamples:tileCountH + 2 ySamples:tileCountH + 2 hard:TRUE];
             
-            staticTileMap = _tileMap;
-            staticMetaMap = _meta;
-
-            
-            ChipmunkBlockSampler* sampler = [[ChipmunkBlockSampler alloc] initWithSamplingFunction: (cpMarchSampleFunc) SampleFuncTileMap];
-         
-            // The output rectangle should be inset slightly so that we sample tile centers, not edges.
-            // This along with the tileOffset below will make sure the tiles line up with the geometry perfectly.
-            //sampler.outputRect = cpBBNew(tileW / 2.0f, tileH / 2.0f, tileW*tileCountW - tileW / 2.0f, tileH*tileCountH - tileH / 2.0f);
-            
-            ChipmunkPolylineSet * polylines = [sampler march:cpBBNew(0, 0, tileW*tileCountW, tileH*tileCountH) xSamples:tileH*tileCountH ySamples:tileH*tileCountH hard:TRUE];
-            
+            cpFloat tileW = _tileMap.tileSize.width;
+            cpFloat tileH = _tileMap.tileSize.height;
             for(ChipmunkPolyline * line in polylines){
-                // Simplify the line data to ignore details smaller than a tile (or part of one maybe).
-                ChipmunkPolyline * simplified = [line simplifyCurves:1.0f];
+				// Each polyline represents a chain of segments or a loop of segments found in the tileset.
+                // Run an exact simplification on the polyline to remove extra vertexes,
+				// but otherwise leave the geometry unchanged.
+                ChipmunkPolyline * simplified = [line simplifyCurves:0.0f];
 
-                // separate line into segments.
+                // Separate polyline into segments.
                 for(int i=0; i<simplified.count-1; i++){
-                    cpVect a = simplified.verts[i];
-                    cpVect b = simplified.verts[i+1];
+					// The sampler coordinates were in tile coordinates.
+					// Convert them to pixel coordinates by multiplying by the tile size.
+                    cpVect a = cpvmult(simplified.verts[  i], tileW);
+                    cpVect b = cpvmult(simplified.verts[i+1], tileH);
                     
-                    ChipmunkShape *seg = [ChipmunkSegmentShape segmentWithBody:space.staticBody from:a to:b radius:1.0f];
+                    ChipmunkShape *seg = [space add:[ChipmunkSegmentShape segmentWithBody:space.staticBody from:a to:b radius:1.0f]];
                     seg.friction = 1.0;
-                    [space add:seg];
                 }
             }
 

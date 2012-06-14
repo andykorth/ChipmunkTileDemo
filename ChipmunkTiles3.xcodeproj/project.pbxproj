@@ -406,7 +406,7 @@
 		75FC9E9E15828BFD00E5396A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		75FC9E9F15828BFD00E5396A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		75FC9EA115828BFD00E5396A /* HelloWorldLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelloWorldLayer.h; sourceTree = "<group>"; };
-		75FC9EA215828BFD00E5396A /* HelloWorldLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelloWorldLayer.m; sourceTree = "<group>"; };
+		75FC9EA215828BFD00E5396A /* HelloWorldLayer.m */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = HelloWorldLayer.m; sourceTree = "<group>"; tabWidth = 4; };
 		75FC9EA91582927100E5396A /* andy.tmx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = andy.tmx; path = Resources/andy.tmx; sourceTree = "<group>"; };
 		75FC9EAA1582927100E5396A /* chipmunkMan.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = chipmunkMan.png; path = Resources/chipmunkMan.png; sourceTree = "<group>"; };
 		75FC9EAB1582927100E5396A /* Target.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Target.png; path = Resources/Target.png; sourceTree = "<group>"; };
