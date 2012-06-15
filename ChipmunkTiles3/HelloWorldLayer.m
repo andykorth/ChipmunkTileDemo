@@ -291,6 +291,8 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 				// See below for why 0.5 is used here.
 				point = cpBBClampVect(cpBBNew(0.5, 0.5, tileCountW - 0.5, tileCountH - 0.5), point);
 				
+				// Alternatively, you could wrap the coordinates around, or have a constant border value.
+				
 				// The samples will always be at tile centers.
 				// So we just need to truncate to an integer to convert to tile coordinates.
 				int x = point.x;
@@ -315,8 +317,8 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 			
 			// So, what rect do we ask it to sample?
 			// Let's look at an example on just the x-axis first:
-			// Say we want to sample 4 tiles: 0.5, 1.5, 2.5, 3.5
-			// So the rect would be cpBBNew(0.5, ..., 2.5, ...) and would use 4 x-samples.
+			// Say we want to sample 4 tile centers: 0.5, 1.5, 2.5, 3.5
+			// So the rect would be cpBBNew(0.5, ..., 3.5, ...) and would use 4 x-samples.
 			// So for a tilemap that is tileCountW wide, you'd use cpBBNew(0.5, ..., tileCountW - 0.5, ...).
 			
 			// BUT! There is one last thing to take care of. If you go from 0.5 to tileCountW - 0.5,
