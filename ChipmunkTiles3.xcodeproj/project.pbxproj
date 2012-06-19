@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		757A53DA1590EAE100F915DA /* TileMap.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 757A53D91590EAE100F915DA /* TileMap.tmx */; };
+		757A53DC1591143A00F915DA /* crate.png in Resources */ = {isa = PBXBuildFile; fileRef = 757A53DB1591143A00F915DA /* crate.png */; };
 		75FC9D1715828BFA00E5396A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FC9D1615828BFA00E5396A /* QuartzCore.framework */; };
 		75FC9D1915828BFA00E5396A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FC9D1815828BFA00E5396A /* OpenGLES.framework */; };
 		75FC9D1B15828BFA00E5396A /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FC9D1A15828BFA00E5396A /* OpenAL.framework */; };
@@ -149,6 +150,7 @@
 
 /* Begin PBXFileReference section */
 		757A53D91590EAE100F915DA /* TileMap.tmx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = TileMap.tmx; path = Resources/TileMap.tmx; sourceTree = "<group>"; };
+		757A53DB1591143A00F915DA /* crate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crate.png; sourceTree = "<group>"; };
 		75FC9D1215828BFA00E5396A /* ChipmunkTiles3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChipmunkTiles3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		75FC9D1615828BFA00E5396A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		75FC9D1815828BFA00E5396A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -544,6 +546,7 @@
 			isa = PBXGroup;
 			children = (
 				757A53D91590EAE100F915DA /* TileMap.tmx */,
+				757A53DB1591143A00F915DA /* crate.png */,
 				75FC9EAA1582927100E5396A /* chipmunkMan.png */,
 				75FC9EAB1582927100E5396A /* Target.png */,
 				75FC9EAC1582927100E5396A /* Projectile.png */,
@@ -1061,6 +1064,7 @@
 				75FC9EFF1582979D00E5396A /* HMVectorNode.vsh in Resources */,
 				75FC9EB41582927100E5396A /* tmw_desert_spacing.png in Resources */,
 				757A53DA1590EAE100F915DA /* TileMap.tmx in Resources */,
+				757A53DC1591143A00F915DA /* crate.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

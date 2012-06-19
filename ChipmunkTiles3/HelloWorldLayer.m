@@ -45,12 +45,11 @@ CGPoint _lastTouchLocation;
     
     CGSize winSize = [[CCDirector sharedDirector] winSize];
     
+    // clamp the position with MIN and MAX to be within inset edges of the map boundary
     int x = MAX(position.x, winSize.width / 2);
     int y = MAX(position.y, winSize.height / 2);
-    x = MIN(x, (_tileMap.mapSize.width * _tileMap.tileSize.width) 
-            - winSize.width / 2);
-    y = MIN(y, (_tileMap.mapSize.height * _tileMap.tileSize.height) 
-            - winSize.height/2);
+    x = MIN(x, (_tileMap.mapSize.width * _tileMap.tileSize.width) - winSize.width / 2);
+    y = MIN(y, (_tileMap.mapSize.height * _tileMap.tileSize.height)  - winSize.height/2);
     // clamped to inset edges
     CGPoint actualPosition = ccp(x, y);
     
@@ -109,24 +108,29 @@ CGPoint _lastTouchLocation;
      _lastTouchLocation = [touch locationInView: [touch view]];
 }
 
-- (ChipmunkBody*)makeBox:(int)i y:(int)y x:(int)x
+- (ChipmunkBody*)makeBoxAtX:(int)x y:(int)y
 {
     float mass = 0.3f;
-    float size = 18.0f;
-    float dist = 50.0f;
+    float size = 27.0f;
     
     ChipmunkBody* body = [ChipmunkBody bodyWithMass:mass andMoment:cpMomentForBox(mass, size, size)];
-    ChipmunkShape* box = [ChipmunkPolyShape boxWithBody:body width: size height: size];
-    box.friction = 1.0f;
+     
+    ChipmunkSprite * boxSprite = [ChipmunkSprite spriteWithFile:@"crate.png"];
+    boxSprite.chipmunkBody = body;
+    boxSprite.position = cpv(x,y);
     
-    [space add:box];
+    ChipmunkShape* boxShape = [ChipmunkPolyShape boxWithBody:body width: size height: size];
+    boxShape.friction = 1.0f;
+    
+    [space add:boxShape];
     [space add:body];
-    
-    body.pos = cpv(x - (dist*2) + (i % 4) * dist, y - (dist*2) +( i / 4) * dist);
+    [self addChild:boxSprite];
     
     //create joints to simulate a top-down linear friction
     // We'll need a set of joints like this on anything we want to have our top-down friction.
-    ChipmunkPivotJoint* pj = [space add: [ChipmunkPivotJoint pivotJointWithBodyA:[space staticBody] bodyB:body anchr1:cpvzero anchr2:cpvzero]];
+    ChipmunkPivotJoint* pj = [space add: [ChipmunkPivotJoint pivotJointWithBodyA:
+                                          [space staticBody] bodyB:body anchr1:cpvzero anchr2:cpvzero]];
+    
     pj.maxForce = 1000.0f; // emulate linear friction
     pj.maxBias = 0; // disable joint correction, don't pull it towards the anchor.
     
@@ -183,6 +187,8 @@ CGPoint _lastTouchLocation;
 				self.player = [ChipmunkSprite spriteWithFile:@"chipmunkMan.png"];
 				self.player.chipmunkBody = playerBody;
 				playerBody.pos = ccp(x,y);
+            
+                [self addChild:self.player];
 				
 				ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
 				playerShape.friction = 0.1;
@@ -277,12 +283,14 @@ CGPoint _lastTouchLocation;
 
             
         }
-		
+        
 		// add some crates, it's not a video game without crates!
 		for(int i=0; i<16; i++){
 			
+            float dist = 50.0f;
+
 			//ChipmunkBody* box = 
-            [self makeBox:i y:y x:x];
+            [self makeBoxAtX:x - (dist*2) + (i % 4) * dist + 200 y:y - (dist*2) +( i / 4) * dist];
 			
 		}
 						
