@@ -15,47 +15,6 @@
 #import "ChipmunkDebugNode.h"
 #import "ChipmunkPointCloudSampler.h"
 
-@interface ChipmunkTilemapSampler : ChipmunkBlockSampler
-
-
-@end
-
-@implementation ChipmunkTilemapSampler
-
-/*
-static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
-{    
-    float tileW = self.tileMap.tileSize.width;
-    float tileH = self.tileMap.tileSize.height;
-    
-    // Look up the tile to see if we set a Collidable property in the Tileset meta layer
-    int tileGid = [_meta tileGIDAt:ccp(point.w / tileW, point.y/ tileH)];
-    if (tileGid) {
-        NSDictionary *properties = [_tileMap propertiesForGID:tileGid];
-        if (properties) {
-            NSString *collision = [properties valueForKey:@"Collidable"];
-            if (collision && [collision compare:@"True"] == NSOrderedSame) {
-                // This tile is collidable, add the point to Chipmunk's sampler:
-                return 1.0f;
-            }
-        }
-    }
-    return 0.0f;
-    
-}
-
-
--(id)initWithTileMap:(CCTMXTiledMap*) tileMap
-{
-	if((self = [super initWithSamplingFunction:(cpMarchSampleFunc)SampleFuncTileMap])){
-		// fill in some crap
-	}
-    
-	return self;
-}
-*/
-@end
-
 // HelloWorldLayer implementation
 @implementation HelloWorldLayer{
     
@@ -66,7 +25,8 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 	//NSMutableArray* chipmunkSprites;
 }
 
-
+bool isTouching;
+CGPoint _lastTouchLocation;
 
 @synthesize tileMap = _tileMap;
 @synthesize background = _background;
@@ -117,17 +77,6 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 	return scene;
 }
 
--(void) registerWithTouchDispatcher
-{
-	[[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self 
-                                                     priority:0 swallowsTouches:YES];
-}
-
--(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
-{
-	return YES;
-}
-
 - (CGPoint)tileCoordForPosition:(CGPoint)position {
     int x = position.x / _tileMap.tileSize.width;
     int y = ((_tileMap.mapSize.height * _tileMap.tileSize.height) - position.y) / _tileMap.tileSize.height;
@@ -151,45 +100,29 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
     //_player.position = position;
 }
 
+
+-(void) registerWithTouchDispatcher
+{
+	[[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self 
+                                                     priority:0 swallowsTouches:YES];
+}
+
+-(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    isTouching = true;
+    _lastTouchLocation = [touch locationInView: [touch view]];
+	return YES;
+}
+
 -(void) ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
     // touch ended, so stop updating the targetPointBody position.
-    
+    isTouching = false;
 }
 
 - (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    //UITouch * touch = [touches anyObject];
-    
-    CGPoint touchLocation = [touch locationInView: [touch view]];		
-    touchLocation = [[CCDirector sharedDirector] convertToGL: touchLocation];
-    touchLocation = [self convertToNodeSpace:touchLocation];
-    
-    CGPoint playerPos = _player.position;
-    CGPoint diff = ccpSub(touchLocation, playerPos);
-    if (abs(diff.x) > abs(diff.y)) {
-        if (diff.x > 0) {
-            playerPos.x += _tileMap.tileSize.width;
-        } else {
-            playerPos.x -= _tileMap.tileSize.width; 
-        }    
-    } else {
-        if (diff.y > 0) {
-            playerPos.y += _tileMap.tileSize.height;
-        } else {
-            playerPos.y -= _tileMap.tileSize.height;
-        }
-    }
-    
-    if (playerPos.x <= (_tileMap.mapSize.width * _tileMap.tileSize.width) &&
-        playerPos.y <= (_tileMap.mapSize.height * _tileMap.tileSize.height) &&
-        playerPos.y >= 0 &&
-        playerPos.x >= 0 ) 
-    {
-        [self setPlayerPosition:playerPos];
-    }
-    
-    targetPointBody.pos = touchLocation;
+     _lastTouchLocation = [touch locationInView: [touch view]];
 }
 
 - (ChipmunkBody*)makeBox:(int)i y:(int)y x:(int)x
@@ -231,6 +164,7 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 		// Setup the space. We won't set a gravity vector since this is top-down
 		space = [[ChipmunkSpace alloc] init];
 		
+        isTouching = false;
 		
 		self.isTouchEnabled = YES;
 		
@@ -380,6 +314,13 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 
 -(void)update:(ccTime)dt
 {
+    
+    // update player motion based on last touch, if we have our finger down:
+    if(isTouching){
+        // the screen may have moved, so convert the screen space touch location to one in world (node) space.
+        CGPoint touchLocation = [self convertToNodeSpace: [[CCDirector sharedDirector] convertToGL: _lastTouchLocation]];
+        targetPointBody.pos = touchLocation;
+    }
     
 	// Update the physics
 	ccTime fixed_dt = [CCDirector sharedDirector].animationInterval;

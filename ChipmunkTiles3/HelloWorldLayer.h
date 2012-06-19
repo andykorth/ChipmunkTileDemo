@@ -19,13 +19,11 @@
     CCTMXTiledMap *_tileMap;
     CCTMXLayer *_background;
     
-     CCTMXLayer *_meta;
+    CCTMXLayer *_meta;
     
-    
-    ChipmunkSprite *_player;
-    
-    
+    ChipmunkSprite *_player;    
 }
+
 // After the class declaration
 @property (nonatomic, retain) CCTMXTiledMap *tileMap;
 @property (nonatomic, retain) CCTMXLayer *background;
