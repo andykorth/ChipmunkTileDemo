@@ -153,6 +153,13 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 
 -(void) ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
+    // touch ended, so stop updating the targetPointBody position.
+    
+}
+
+- (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    //UITouch * touch = [touches anyObject];
     
     CGPoint touchLocation = [touch locationInView: [touch view]];		
     touchLocation = [[CCDirector sharedDirector] convertToGL: touchLocation];
@@ -227,7 +234,7 @@ static cpFloat SampleFuncTileMap(cpVect point, ChipmunkBitmapSampler *self)
 		
 		self.isTouchEnabled = YES;
 		
-		self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"andy.tmx"];
+		self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"TileMap.tmx"];
 		self.background = [_tileMap layerNamed:@"Background"];
 		
 		[self addChild:_tileMap z:-1];
