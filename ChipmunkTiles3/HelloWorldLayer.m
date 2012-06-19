@@ -84,22 +84,6 @@ CGPoint _lastTouchLocation;
 }
 
 
--(void)setPlayerPosition:(CGPoint)position {
-    CGPoint tileCoord = [self tileCoordForPosition:position];
-    int tileGid = [_meta tileGIDAt:tileCoord];
-    if (tileGid) {
-        NSDictionary *properties = [_tileMap propertiesForGID:tileGid];
-        if (properties) {
-            NSString *collision = [properties valueForKey:@"Collidable"];
-            if (collision && [collision compare:@"True"] == NSOrderedSame) {
-                return;
-            }
-        }
-    }
-   
-    //_player.position = position;
-}
-
 
 -(void) registerWithTouchDispatcher
 {
@@ -199,8 +183,7 @@ CGPoint _lastTouchLocation;
 				self.player = [ChipmunkSprite spriteWithFile:@"chipmunkMan.png"];
 				self.player.chipmunkBody = playerBody;
 				playerBody.pos = ccp(x,y);
-				_player.position = ccp(x,y);
-			
+				
 				ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
 				playerShape.friction = 0.1;
 
@@ -208,7 +191,7 @@ CGPoint _lastTouchLocation;
 				// motion based on the control body
 				
 				targetPointBody = [[ChipmunkBody alloc] initStaticBody];
-				targetPointBody.pos = ccp(x,y); // line them up so the initial position is right
+				targetPointBody.pos = ccp(x,y); // make the player's target destination start at the same place the player.
 				
 				ChipmunkPivotJoint* joint = [space add:[ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero]];
 
