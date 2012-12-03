@@ -6,7 +6,6 @@
 //  Copyright Howling Moon Software 2012. All rights reserved.
 //
 
-
 // Import the interfaces
 #import "HelloWorldLayer.h"
 
@@ -35,8 +34,6 @@ CGPoint _lastTouchLocation;
     CCSprite *sprite = (CCSprite *)sender;
     [self removeChild:sprite cleanup:YES];
 }
-
-
 
 -(void)setViewpointCenter:(CGPoint) position {
     
@@ -80,12 +77,9 @@ CGPoint _lastTouchLocation;
     return ccp(x, y);
 }
 
-
-
 -(void) registerWithTouchDispatcher
 {
-	[[[CCDirector sharedDirector] touchDispatcher] addTargetedDelegate:self
-                                                     priority:0 swallowsTouches:YES];
+	[[[CCDirector sharedDirector] touchDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
 }
 
 -(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
@@ -127,7 +121,7 @@ CGPoint _lastTouchLocation;
     //create joints to simulate a top-down linear friction
     // We'll need a set of joints like this on anything we want to have our top-down friction.
     ChipmunkPivotJoint* pj = [space add: [ChipmunkPivotJoint pivotJointWithBodyA:
-                                          [space staticBody] bodyB:body anchr1:cpvzero anchr2:cpvzero]];
+                              [space staticBody] bodyB:body anchr1:cpvzero anchr2:cpvzero]];
     
     pj.maxForce = 1000.0f; // emulate linear friction
     pj.maxBias = 0; // disable joint correction, don't pull it towards the anchor.
@@ -175,7 +169,6 @@ CGPoint _lastTouchLocation;
 		[self addChild:debugNode];
 				
 		{
-				
             // set up the player body and shape
             float playerMass = 1.0f;
             float playerRadius = 13.0f;
@@ -209,7 +202,8 @@ CGPoint _lastTouchLocation;
             joint.maxForce = 3000.0f; 
 		}
         
-        {            
+        {
+            // Now have the Chipmunk autogeometry  create geometry based on the tilemap!
             int tileCountW = _meta.layerSize.width;
             int tileCountH = _meta.layerSize.height;
 			
@@ -287,8 +281,7 @@ CGPoint _lastTouchLocation;
 			
             float dist = 50.0f;
 
-			//ChipmunkBody* box = 
-            [self makeBoxAtX:x - (dist*2) + (i % 4) * dist + 200 y:y - (dist*2) +( i / 4) * dist];
+            [self makeBoxAtX: x + (i % 4) * dist + 200 y: y + ( i / 4) * dist - 200];
 			
 		}
 						
