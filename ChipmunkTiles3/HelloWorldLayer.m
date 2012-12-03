@@ -84,7 +84,7 @@ CGPoint _lastTouchLocation;
 
 -(void) registerWithTouchDispatcher
 {
-	[[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self 
+	[[[CCDirector sharedDirector] touchDispatcher] addTargetedDelegate:self
                                                      priority:0 swallowsTouches:YES];
 }
 
@@ -152,7 +152,7 @@ CGPoint _lastTouchLocation;
 		
         isTouching = false;
 		
-		self.isTouchEnabled = YES;
+		self.touchEnabled = YES;
 		
 		self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"TileMap.tmx"];
 		self.background = [_tileMap layerNamed:@"Background"];

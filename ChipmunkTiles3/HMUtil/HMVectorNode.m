@@ -141,7 +141,7 @@ typedef struct Triangle {Vertex a, b, c;} Triangle;
 	ccGLBlendFunc(_blendFunc.src, _blendFunc.dst);
 	
 	[shaderProgram_ use];
-	[shaderProgram_ setUniformForModelViewProjectionMatrix];
+	[shaderProgram_ setUniformsForBuiltins];
 	
 	[self render];
 	

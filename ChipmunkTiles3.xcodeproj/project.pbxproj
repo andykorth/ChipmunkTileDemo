@@ -119,6 +119,7 @@
 		75C370E3166D30F100BEF952 /* LICENSE_CocosDenshion.txt in Resources */ = {isa = PBXBuildFile; fileRef = 75C37075166D30F100BEF952 /* LICENSE_CocosDenshion.txt */; };
 		75C370E4166D30F100BEF952 /* LICENSE_Kazmath.txt in Resources */ = {isa = PBXBuildFile; fileRef = 75C37076166D30F100BEF952 /* LICENSE_Kazmath.txt */; };
 		75C370E9166D31FA00BEF952 /* libChipmunkPro-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 75C36F78166D30F100BEF952 /* libChipmunkPro-iPhone.a */; };
+		75C370EB166D379800BEF952 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 75C370EA166D379800BEF952 /* Default-568h@2x.png */; };
 		75FC9D1715828BFA00E5396A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FC9D1615828BFA00E5396A /* QuartzCore.framework */; };
 		75FC9D1915828BFA00E5396A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FC9D1815828BFA00E5396A /* OpenGLES.framework */; };
 		75FC9D1B15828BFA00E5396A /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FC9D1A15828BFA00E5396A /* OpenAL.framework */; };
@@ -440,6 +441,7 @@
 		75C37074166D30F100BEF952 /* LICENSE_cocos2d.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE_cocos2d.txt; path = libs/LICENSE_cocos2d.txt; sourceTree = "<group>"; };
 		75C37075166D30F100BEF952 /* LICENSE_CocosDenshion.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE_CocosDenshion.txt; path = libs/LICENSE_CocosDenshion.txt; sourceTree = "<group>"; };
 		75C37076166D30F100BEF952 /* LICENSE_Kazmath.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE_Kazmath.txt; path = libs/LICENSE_Kazmath.txt; sourceTree = "<group>"; };
+		75C370EA166D379800BEF952 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		75FC9D1215828BFA00E5396A /* ChipmunkTiles3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChipmunkTiles3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		75FC9D1615828BFA00E5396A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		75FC9D1815828BFA00E5396A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -907,6 +909,7 @@
 		75FC9D0715828BFA00E5396A = {
 			isa = PBXGroup;
 			children = (
+				75C370EA166D379800BEF952 /* Default-568h@2x.png */,
 				75FC9D2815828BFA00E5396A /* ChipmunkTiles3 */,
 				75FC9D1515828BFA00E5396A /* Frameworks */,
 				75FC9D1315828BFA00E5396A /* Products */,
@@ -1091,6 +1094,7 @@
 				75C370E2166D30F100BEF952 /* LICENSE_cocos2d.txt in Resources */,
 				75C370E3166D30F100BEF952 /* LICENSE_CocosDenshion.txt in Resources */,
 				75C370E4166D30F100BEF952 /* LICENSE_Kazmath.txt in Resources */,
+				75C370EB166D379800BEF952 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1268,7 +1272,6 @@
 				INFOPLIST_FILE = ChipmunkTiles3/Resources/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ChipmunkTiles3/ChipmunkPro-iPhone\"",
 					"\"$(SRCROOT)/ChipmunkTiles3/libs/ChipmunkPro-iPhone-Trial\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1292,7 +1295,6 @@
 				INFOPLIST_FILE = ChipmunkTiles3/Resources/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ChipmunkTiles3/ChipmunkPro-iPhone\"",
 					"\"$(SRCROOT)/ChipmunkTiles3/libs/ChipmunkPro-iPhone-Trial\"",
 				);
 				OTHER_LDFLAGS = (
