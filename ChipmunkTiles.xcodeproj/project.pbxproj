@@ -139,13 +139,10 @@
 		75FC9D3915828BFA00E5396A /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9D3815828BFA00E5396A /* Icon-Small@2x.png */; };
 		75FC9D3B15828BFA00E5396A /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9D3A15828BFA00E5396A /* Icon.png */; };
 		75FC9D3D15828BFA00E5396A /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9D3C15828BFA00E5396A /* Icon@2x.png */; };
-		75FC9D4015828BFA00E5396A /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9D3F15828BFA00E5396A /* iTunesArtwork */; };
 		75FC9E9D15828BFD00E5396A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FC9E9C15828BFD00E5396A /* main.m */; };
 		75FC9EA015828BFD00E5396A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FC9E9F15828BFD00E5396A /* AppDelegate.m */; };
 		75FC9EA315828BFD00E5396A /* HelloWorldLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FC9EA215828BFD00E5396A /* HelloWorldLayer.m */; };
 		75FC9EB01582927100E5396A /* chipmunkMan.png in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9EAA1582927100E5396A /* chipmunkMan.png */; };
-		75FC9EB11582927100E5396A /* Target.png in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9EAB1582927100E5396A /* Target.png */; };
-		75FC9EB21582927100E5396A /* Projectile.png in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9EAC1582927100E5396A /* Projectile.png */; };
 		75FC9EB31582927100E5396A /* meta_tiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9EAD1582927100E5396A /* meta_tiles.png */; };
 		75FC9EB41582927100E5396A /* tmw_desert_spacing.png in Resources */ = {isa = PBXBuildFile; fileRef = 75FC9EAE1582927100E5396A /* tmw_desert_spacing.png */; };
 		75FC9EEE1582928500E5396A /* ChipmunkGLRenderBufferSampler.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FC9EB91582928500E5396A /* ChipmunkGLRenderBufferSampler.m */; };
@@ -442,7 +439,7 @@
 		75C37075166D30F100BEF952 /* LICENSE_CocosDenshion.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE_CocosDenshion.txt; path = libs/LICENSE_CocosDenshion.txt; sourceTree = "<group>"; };
 		75C37076166D30F100BEF952 /* LICENSE_Kazmath.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE_Kazmath.txt; path = libs/LICENSE_Kazmath.txt; sourceTree = "<group>"; };
 		75C370EA166D379800BEF952 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		75FC9D1215828BFA00E5396A /* ChipmunkTiles3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChipmunkTiles3.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		75FC9D1215828BFA00E5396A /* ChipmunkTiles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChipmunkTiles.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		75FC9D1615828BFA00E5396A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		75FC9D1815828BFA00E5396A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		75FC9D1A15828BFA00E5396A /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
@@ -463,7 +460,6 @@
 		75FC9D3A15828BFA00E5396A /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = Resources/Icon.png; sourceTree = "<group>"; };
 		75FC9D3C15828BFA00E5396A /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Resources/Icon@2x.png"; sourceTree = "<group>"; };
 		75FC9D3E15828BFA00E5396A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
-		75FC9D3F15828BFA00E5396A /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; name = iTunesArtwork; path = Resources/iTunesArtwork; sourceTree = "<group>"; };
 		75FC9E9B15828BFD00E5396A /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		75FC9E9C15828BFD00E5396A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		75FC9E9E15828BFD00E5396A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -471,8 +467,6 @@
 		75FC9EA115828BFD00E5396A /* HelloWorldLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelloWorldLayer.h; sourceTree = "<group>"; };
 		75FC9EA215828BFD00E5396A /* HelloWorldLayer.m */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = HelloWorldLayer.m; sourceTree = "<group>"; tabWidth = 4; };
 		75FC9EAA1582927100E5396A /* chipmunkMan.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = chipmunkMan.png; path = Resources/chipmunkMan.png; sourceTree = "<group>"; };
-		75FC9EAB1582927100E5396A /* Target.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Target.png; path = Resources/Target.png; sourceTree = "<group>"; };
-		75FC9EAC1582927100E5396A /* Projectile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Projectile.png; path = Resources/Projectile.png; sourceTree = "<group>"; };
 		75FC9EAD1582927100E5396A /* meta_tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = meta_tiles.png; path = Resources/meta_tiles.png; sourceTree = "<group>"; };
 		75FC9EAE1582927100E5396A /* tmw_desert_spacing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tmw_desert_spacing.png; path = Resources/tmw_desert_spacing.png; sourceTree = "<group>"; };
 		75FC9EB81582928500E5396A /* ChipmunkGLRenderBufferSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChipmunkGLRenderBufferSampler.h; sourceTree = "<group>"; };
@@ -910,7 +904,7 @@
 			isa = PBXGroup;
 			children = (
 				75C370EA166D379800BEF952 /* Default-568h@2x.png */,
-				75FC9D2815828BFA00E5396A /* ChipmunkTiles3 */,
+				75FC9D2815828BFA00E5396A /* ChipmunkTiles */,
 				75FC9D1515828BFA00E5396A /* Frameworks */,
 				75FC9D1315828BFA00E5396A /* Products */,
 			);
@@ -919,7 +913,7 @@
 		75FC9D1315828BFA00E5396A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				75FC9D1215828BFA00E5396A /* ChipmunkTiles3.app */,
+				75FC9D1215828BFA00E5396A /* ChipmunkTiles.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -941,7 +935,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		75FC9D2815828BFA00E5396A /* ChipmunkTiles3 */ = {
+		75FC9D2815828BFA00E5396A /* ChipmunkTiles */ = {
 			isa = PBXGroup;
 			children = (
 				75FC9EB51582928500E5396A /* HMUtil */,
@@ -953,6 +947,7 @@
 				75FC9D4115828BFA00E5396A /* libs */,
 				75FC9E9A15828BFD00E5396A /* Supporting Files */,
 			);
+			name = ChipmunkTiles;
 			path = ChipmunkTiles3;
 			sourceTree = "<group>";
 		};
@@ -962,8 +957,6 @@
 				757A53D91590EAE100F915DA /* TileMap.tmx */,
 				757A53DB1591143A00F915DA /* crate.png */,
 				75FC9EAA1582927100E5396A /* chipmunkMan.png */,
-				75FC9EAB1582927100E5396A /* Target.png */,
-				75FC9EAC1582927100E5396A /* Projectile.png */,
 				75FC9EAD1582927100E5396A /* meta_tiles.png */,
 				75FC9EAE1582927100E5396A /* tmw_desert_spacing.png */,
 				75FC9D2A15828BFA00E5396A /* Default.png */,
@@ -977,7 +970,6 @@
 				75FC9D3A15828BFA00E5396A /* Icon.png */,
 				75FC9D3C15828BFA00E5396A /* Icon@2x.png */,
 				75FC9D3E15828BFA00E5396A /* Info.plist */,
-				75FC9D3F15828BFA00E5396A /* iTunesArtwork */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1021,9 +1013,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		75FC9D1115828BFA00E5396A /* ChipmunkTiles3 */ = {
+		75FC9D1115828BFA00E5396A /* ChipmunkTiles */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 75FC9EA615828BFD00E5396A /* Build configuration list for PBXNativeTarget "ChipmunkTiles3" */;
+			buildConfigurationList = 75FC9EA615828BFD00E5396A /* Build configuration list for PBXNativeTarget "ChipmunkTiles" */;
 			buildPhases = (
 				75FC9D0E15828BFA00E5396A /* Sources */,
 				75FC9D0F15828BFA00E5396A /* Frameworks */,
@@ -1033,9 +1025,9 @@
 			);
 			dependencies = (
 			);
-			name = ChipmunkTiles3;
+			name = ChipmunkTiles;
 			productName = ChipmunkTiles3;
-			productReference = 75FC9D1215828BFA00E5396A /* ChipmunkTiles3.app */;
+			productReference = 75FC9D1215828BFA00E5396A /* ChipmunkTiles.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1047,7 +1039,7 @@
 				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "Howling Moon Software";
 			};
-			buildConfigurationList = 75FC9D0C15828BFA00E5396A /* Build configuration list for PBXProject "ChipmunkTiles3" */;
+			buildConfigurationList = 75FC9D0C15828BFA00E5396A /* Build configuration list for PBXProject "ChipmunkTiles" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1059,7 +1051,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				75FC9D1115828BFA00E5396A /* ChipmunkTiles3 */,
+				75FC9D1115828BFA00E5396A /* ChipmunkTiles */,
 			);
 		};
 /* End PBXProject section */
@@ -1079,10 +1071,7 @@
 				75FC9D3915828BFA00E5396A /* Icon-Small@2x.png in Resources */,
 				75FC9D3B15828BFA00E5396A /* Icon.png in Resources */,
 				75FC9D3D15828BFA00E5396A /* Icon@2x.png in Resources */,
-				75FC9D4015828BFA00E5396A /* iTunesArtwork in Resources */,
 				75FC9EB01582927100E5396A /* chipmunkMan.png in Resources */,
-				75FC9EB11582927100E5396A /* Target.png in Resources */,
-				75FC9EB21582927100E5396A /* Projectile.png in Resources */,
 				75FC9EB31582927100E5396A /* meta_tiles.png in Resources */,
 				75FC9EFE1582979B00E5396A /* HMVectorNode.fsh in Resources */,
 				75FC9EFF1582979D00E5396A /* HMVectorNode.vsh in Resources */,
@@ -1278,7 +1267,7 @@
 					"-lz",
 					"-ObjC",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ChipmunkTiles;
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1301,7 +1290,7 @@
 					"-lz",
 					"-ObjC",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ChipmunkTiles;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
@@ -1311,7 +1300,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		75FC9D0C15828BFA00E5396A /* Build configuration list for PBXProject "ChipmunkTiles3" */ = {
+		75FC9D0C15828BFA00E5396A /* Build configuration list for PBXProject "ChipmunkTiles" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				75FC9EA415828BFD00E5396A /* Debug */,
@@ -1320,7 +1309,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		75FC9EA615828BFD00E5396A /* Build configuration list for PBXNativeTarget "ChipmunkTiles3" */ = {
+		75FC9EA615828BFD00E5396A /* Build configuration list for PBXNativeTarget "ChipmunkTiles" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				75FC9EA715828BFD00E5396A /* Debug */,
