@@ -19,8 +19,8 @@
  * SOFTWARE.
  */
 
-#import "cocos2d.h"
 #import "ChipmunkImageSampler.h"
+#import "cocos2d.h"
 
 /*
 	This class is a little hacked together, but works just dandy.

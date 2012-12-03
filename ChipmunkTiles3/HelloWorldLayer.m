@@ -12,7 +12,6 @@
 
 #import "ChipmunkAutoGeometry.h"
 #import "ChipmunkGLRenderBufferSampler.h"
-#import "ChipmunkDebugNode.h"
 #import "ChipmunkPointCloudSampler.h"
 
 // HelloWorldLayer implementation
@@ -21,8 +20,6 @@
     ChipmunkSpace *space;
     ChipmunkBody *targetPointBody;
     ChipmunkBody *playerBody;
-	
-	//NSMutableArray* chipmunkSprites;
 }
 
 bool isTouching;
@@ -50,6 +47,7 @@ CGPoint _lastTouchLocation;
     int y = MAX(position.y, winSize.height / 2);
     x = MIN(x, (_tileMap.mapSize.width * _tileMap.tileSize.width) - winSize.width / 2);
     y = MIN(y, (_tileMap.mapSize.height * _tileMap.tileSize.height)  - winSize.height/2);
+    
     // clamped to inset edges
     CGPoint actualPosition = ccp(x, y);
     
@@ -115,7 +113,7 @@ CGPoint _lastTouchLocation;
     
     ChipmunkBody* body = [ChipmunkBody bodyWithMass:mass andMoment:cpMomentForBox(mass, size, size)];
      
-    ChipmunkSprite * boxSprite = [ChipmunkSprite spriteWithFile:@"crate.png"];
+    CCPhysicsSprite * boxSprite = [CCPhysicsSprite spriteWithFile:@"crate.png"];
     boxSprite.chipmunkBody = body;
     boxSprite.position = cpv(x,y);
     
@@ -172,43 +170,43 @@ CGPoint _lastTouchLocation;
 		_meta.visible = NO;
 		
 		
-		// Add a ChipmunkDebugNode to draw the space.
-		ChipmunkDebugNode *debugNode = [ChipmunkDebugNode debugNodeForChipmunkSpace:space];
+		// Add a CCPhysicsDebugNode to draw the space.
+		CCPhysicsDebugNode *debugNode = [CCPhysicsDebugNode debugNodeForChipmunkSpace:space];
 		[self addChild:debugNode];
 				
 		{
 				
-				// set up the player body and shape
-				float playerMass = 1.0f;
-				float playerRadius = 13.0f;
-				
-				playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:INFINITY]];
-				
-				self.player = [ChipmunkSprite spriteWithFile:@"chipmunkMan.png"];
-				self.player.chipmunkBody = playerBody;
-				playerBody.pos = ccp(x,y);
+            // set up the player body and shape
+            float playerMass = 1.0f;
+            float playerRadius = 13.0f;
             
-                [self addChild:self.player];
-				
-				ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
-				playerShape.friction = 0.1;
+            playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:INFINITY]];
+            
+            self.player = [CCPhysicsSprite spriteWithFile:@"chipmunkMan.png"];
+            self.player.chipmunkBody = playerBody;
+            playerBody.pos = ccp(x,y);
+        
+            [self addChild:self.player];
+            
+            ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
+            playerShape.friction = 0.1;
 
-				// now create a control body. We'll move this around and use joints to do the actual player 
-				// motion based on the control body
-				
-				targetPointBody = [[ChipmunkBody alloc] initStaticBody];
-				targetPointBody.pos = ccp(x,y); // make the player's target destination start at the same place the player.
-				
-				ChipmunkPivotJoint* joint = [space add:[ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero]];
+            // now create a control body. We'll move this around and use joints to do the actual player 
+            // motion based on the control body
+            
+            targetPointBody = [[ChipmunkBody alloc] initStaticBody];
+            targetPointBody.pos = ccp(x,y); // make the player's target destination start at the same place the player.
+            
+            ChipmunkPivotJoint* joint = [space add:[ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero]];
 
-				// max bias controls the maximum speed that a joint can be corrected at. So that means 
-				// the player body won't be forced towards the control at a speed higher than this.
-				// Thus it's essentially the speed of the player's motion
-				joint.maxBias = 200.0f;
-				
-				// limiting the force will prevent us from crazily pushing huge piles
-				// of heavy things. and give us a sort of top-down friction.
-				joint.maxForce = 3000.0f; 
+            // max bias controls the maximum speed that a joint can be corrected at. So that means 
+            // the player body won't be forced towards the control at a speed higher than this.
+            // Thus it's essentially the speed of the player's motion
+            joint.maxBias = 200.0f;
+            
+            // limiting the force will prevent us from crazily pushing huge piles
+            // of heavy things. and give us a sort of top-down friction.
+            joint.maxForce = 3000.0f; 
 		}
         
         {            

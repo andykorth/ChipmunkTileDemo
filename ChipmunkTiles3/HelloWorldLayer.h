@@ -7,10 +7,10 @@
 //
 
 
+// First import ObjectiveChipmunk to prevent crazy bad header things from happening
+#import "ObjectiveChipmunk.h"
 // When you import this file, you import all the cocos2d classes
 #import "cocos2d.h"
-#import "ObjectiveChipmunk.h"
-#import "ChipmunkSprite.h"
 
 // HelloWorldLayer
 @interface HelloWorldLayer : CCLayer
@@ -21,14 +21,14 @@
     
     CCTMXLayer *_meta;
     
-    ChipmunkSprite *_player;    
+    CCPhysicsSprite *_player;
 }
 
 // After the class declaration
 @property (nonatomic, retain) CCTMXTiledMap *tileMap;
 @property (nonatomic, retain) CCTMXLayer *background;
 
-@property (nonatomic, retain) ChipmunkSprite *player;
+@property (nonatomic, retain) CCPhysicsSprite *player;
 
 @property (nonatomic, retain) CCTMXLayer *meta;
 
