@@ -947,8 +947,7 @@
 				75FC9D4115828BFA00E5396A /* libs */,
 				75FC9E9A15828BFD00E5396A /* Supporting Files */,
 			);
-			name = ChipmunkTiles;
-			path = ChipmunkTiles3;
+			path = ChipmunkTiles;
 			sourceTree = "<group>";
 		};
 		75FC9D2915828BFA00E5396A /* Resources */ = {
@@ -1256,12 +1255,12 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ChipmunkTiles3/Prefix.pch;
-				HEADER_SEARCH_PATHS = "\"ChipmunkTiles3/libs/kazmath/include\"";
-				INFOPLIST_FILE = ChipmunkTiles3/Resources/Info.plist;
+				GCC_PREFIX_HEADER = ChipmunkTiles/Prefix.pch;
+				HEADER_SEARCH_PATHS = "\"ChipmunkTiles/libs/kazmath/include\"";
+				INFOPLIST_FILE = ChipmunkTiles/Resources/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ChipmunkTiles3/libs/ChipmunkPro-iPhone-Trial\"",
+					"\"$(SRCROOT)/ChipmunkTiles/libs/ChipmunkPro-iPhone-Trial\"",
 				);
 				OTHER_LDFLAGS = (
 					"-lz",
@@ -1279,12 +1278,12 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ChipmunkTiles3/Prefix.pch;
-				HEADER_SEARCH_PATHS = "\"ChipmunkTiles3/libs/kazmath/include\"";
-				INFOPLIST_FILE = ChipmunkTiles3/Resources/Info.plist;
+				GCC_PREFIX_HEADER = ChipmunkTiles/Prefix.pch;
+				HEADER_SEARCH_PATHS = "\"ChipmunkTiles/libs/kazmath/include\"";
+				INFOPLIST_FILE = ChipmunkTiles/Resources/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ChipmunkTiles3/libs/ChipmunkPro-iPhone-Trial\"",
+					"\"$(SRCROOT)/ChipmunkTiles/libs/ChipmunkPro-iPhone-Trial\"",
 				);
 				OTHER_LDFLAGS = (
 					"-lz",
