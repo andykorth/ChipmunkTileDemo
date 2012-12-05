@@ -137,5 +137,80 @@ One nice thing about working with Chipmunk in Cocos2d is easy debugging of shape
 And we do three things here. We create the player, then we create the terrain geometry, then add some boxes. After that there's a little cleanup by making sure the view starts centered on the player and that the Cocos2d update method is scheduled to be called. Let's look at each of these individually.
 </p>
 
+<h2>Creating a Top Down Player using Chipmunk:</h2>
+<p>
+Our goal is to have a player that smoothly moves through the world, slides along walls without gettings stuck, and can push around blocks. From the perspective of controls, we also want them to quickly and smoothly start and stop moving. So let's get to the code!
+</p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">- (<span style="color:#881350;">void</span>)<span style="color:#6c0540;">createPlayer:</span>(<span style="color:#881350;">int</span>)y <span style="color:#6c0540;">x:</span>(<span style="color:#881350;">int</span>)x<br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// set up the player body and shape<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">float</span> playerMass = <span style="color:#0000ff;">1.0f</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">float</span> playerRadius = <span style="color:#0000ff;">13.0f</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;playerBody = [space <span style="color:#6c0540;">add:</span>[ChipmunkBody <span style="color:#6c0540;">bodyWithMass:</span>playerMass <span style="color:#6c0540;">andMoment:</span>INFINITY]];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;_player = [CCPhysicsSprite <span style="color:#6c0540;">spriteWithFile:</span><span style="color:#760f15;">@&quot;chipmunkMan.png&quot;</span>];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;_player.chipmunkBody = playerBody;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;playerBody.pos = <span style="color:#003369;">ccp</span>(x,y);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[<span style="color:#881350;">self</span> <span style="color:#6c0540;">addChild:</span>_player];</div>
+
+<p>
+First, we set up the ChipmunkBody for the player. We create it with a mass of 1.0 and an infinite moment of inertia. That infinite moment will prevent the player from rotating. A player that could rotate would start spinning when you slide against walls. And when a rotating player came in contact with something they could push, like a box, the friction between the player and the box would cause it to move in a weird way.
+</p>
+<p>
+_player is our CCSprite- in this case, a CCPhysicsSprite. CCPhysicsSprite is a subclass of CCSprite that ties the sprite to a physics body. When the physics body moves around, the sprite also moves- in fact what happens behind the scene is that the sprite just accesses the physics body for position, rotation, etc. We set the body of the physics sprite to the ChipmunkBody we just made, and then set the position to (x, y), the position of the spawn point we passed in as an argument. 
+</p>
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkShape *playerShape = [space <span style="color:#6c0540;">add:</span>[ChipmunkCircleShape <span style="color:#6c0540;">circleWithBody:</span>playerBody <span style="color:#6c0540;">radius:</span>playerRadius <span style="color:#6c0540;">offset:</span>cpvzero]];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;playerShape.friction = <span style="color:#0000ff;">0.1</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;</div>
+<p>
+Circles make good representations of just about any character. Before you think you need a more complicated polygon, please start with a circle- there are several advantages. Most importantly, circles have no edges or corners that get caught on other geometry. Since they have a constant radius, you are always sure of the size of the player and what they can fit into. We set a little friction, mostly to dictate how our player interacts with other objects.
+</p>
+<p>
+Although we're thinking of this as a top-down game, the friction component does not represent the player's friction with the ground. There isn't a 'ground' object in our game- you're just always in contact with the ground. We'll get to this more later.
+</p>
+
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;targetPointBody = [[ChipmunkBody <span style="color:#ff0000;">alloc</span>] <span style="color:#6c0540;">initStaticBody</span>];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;targetPointBody.pos = <span style="color:#003369;">ccp</span>(x,y); <span style="color:#236e25;">// make the player's target destination start at the same place the player.<br />
+</span></div>
+<p>
+We use a static body as a control body. This control body represents the target destination of the player. Because this is an iOS demo, we decided to go with a control scheme where you tap a point on the screen, and the character moves towards it. If you hold down your finger, the player keeps moving in that direction. So when it's time to handle input, it's very simple, we just set the position of the control body to the touch.
+</p>
+<p>
+But how does this work?
+</p>
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkPivotJoint* joint = [space <span style="color:#6c0540;">add:</span>[ChipmunkPivotJoint <span style="color:#6c0540;">pivotJointWithBodyA:</span>targetPointBody <span style="color:#6c0540;">bodyB:</span>playerBody <span style="color:#6c0540;">anchr1:</span>cpvzero <span style="color:#6c0540;">anchr2:</span>cpvzero]];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;joint.maxBias = <span style="color:#0000ff;">200.0f</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;joint.maxForce = <span style="color:#0000ff;">3000.0f</span>;</div>
+<p>
+Joints control the motion of the player. Our pivot joint pulls the player towards the targetPointBody. Because that's a static body, only the player moves (unless we explicitly set the position of targetPointBody). It sort of acts like a spring or a rubber band, with the player constantly trying to move towards the control point, but it's simpler than that. There's no springy-ness to the motion- we have just two values to tweak:
+</p>
+<p>
+<stong>maxBias</strong> controls the maximum speed at which a joint can be corrected. So if our playerBody is far away from the targetPointBody, there's a limit to how far per second the player is pulled towards the targetPointBody. So this is really a max speed for the player's motion across the world. This works great for our game since we want the player to move at the same speed if he's going horizontally, vertically, or diagonally.
+</p>
+<p>
+<stong>maxForce</strong> controls the maximum force the joint will apply to correct the positions. If you've ever seen things <A href="http://www.youtube.com/watch?v=vfl33Tn0pYc">explode in video games</A> (I'm sure you've seen a thousand of them), you'll know why you want to set maximum forces. Often these glitches are a result of something exerting huuuuuuuge amounts of force trying to get something to move. By adjusting this maxForce value, you control things like how many boxes we're able to push. 
+</p>
+<p>
+<em>But why not just set the position of the player body when I want to move him?</em>  Good question! Think of setting the position of a body to be "teleporting" that object somewhere. You aren't telling the physics engine how it got there. Chipmunk doesn't know how much force should be applied if it does hit an object along the way. And you may have teleported something right into a wall. Chipmunk will still resolve that collision and fix it, but you'll see the object you've teleported move into the wall more than you would have otherwise. 
+</p>
+<em>Well then, how about just setting the velocity each frame?</em>  This is an improvement! By setting the velocity, the physics engine solver can set the position and does a better job of ensuring the object doesn't move into another piece of geometry. When you have a collision, the engine knows the speed of the colliding objects and can calculate how they get knocked back.</p>
+<p>
+Follow along with me. Place our hand on a wall... then apply a velocity to it- into the wall. You can't. You can apply a force. (Hopefully your personal maxForce is not enough to move your wall.. otherwise, I'm sorry for broke your wall). So you could apply forces instead. That works great for things like cannons, but continual forces can be awkward when you've got a character that you want to maintain moving at a constant speed.
+</p>
+<p>
+And finally, by using a control point and a joint, we don't have to worry calculating if we're close to our destination point and adjusting the force or velocity. We also get to slide around edges of walls. Pretty slick for just a few lines of code!
+</p>
+
+
+<h2>Creating the terrain geometry using Chipmunk's Autogeometry features:</h2>
+<p>
+
+</p>
+
 	</body>
 </html>

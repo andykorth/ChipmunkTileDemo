@@ -111,7 +111,6 @@ CGPoint _lastTouchLocation;
     
     // now create a control body. We'll move this around and use joints to do the actual player 
     // motion based on the control body
-    
     targetPointBody = [[ChipmunkBody alloc] initStaticBody];
     targetPointBody.pos = ccp(x,y); // make the player's target destination start at the same place the player.
     
