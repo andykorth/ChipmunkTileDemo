@@ -209,8 +209,151 @@ And finally, by using a control point and a joint, we don't have to worry calcul
 
 <h2>Creating the terrain geometry using Chipmunk's Autogeometry features:</h2>
 <p>
+Let's start with a brief rundown on how the you can write different samplers for Chipmunk's auto-geometry features. Samplers are used by Chipmunk to create geometry by looking at specific points; you could think of it as a density function. A sampling function takes a point (a cpVect) as an argument, and returns the density at that location. Image samplers are an easy example of a sampling function. The sampling function would just look at the image at (x, y) and return the color or alpha of the image at that pixel.
+</p>
+<p>
+Sampling functions could work anyway you imagine. Sampling images is common, but they could sample a noise function, or a fractal pattern, or anything you could imagine. Here we're going to sample the tilemap. 
+</p>
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">- (<span style="color:#881350;">void</span>)<span style="color:#6c0540;">createTerrainGeometry</span><br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">int</span> tileCountW = _meta.layerSize.width;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">int</span> tileCountH = _meta.layerSize.height;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cpBB sampleRect = <span style="color:#003369;">cpBBNew</span>(<span style="color:#0000ff;">-0.5</span>, <span style="color:#0000ff;">-0.5</span>, tileCountW + <span style="color:#0000ff;">0.5</span>, tileCountH + <span style="color:#0000ff;">0.5</span>);</div>
+
+<p>
+We'll be using the <strong>cpBB sampleRect</strong> later to tell the autogeometry the range that it should look at. It goes from approximately (0, 0) to (tileCountW, tileCountH)... the width and height of the tilemap. I know you already want to know what's up with the halfs- the 0.5f. There are two things we're doing here:
+</p>
+<p>
+First, we're sampling from the center of tiles. (0, 0) is the top left corner of our top left tile. (1, 0) is the  top left corner of the next tile to the right. We want our geometry centered at the center of the tile- not centered over the corner of tiles. This way the collision edges line up with the edges of the tiles. So, (0.5, 0.5) is the center of the top-left tile.
+</p>
+<p>
+<em>But we start at (-0.5, -0.5)!</em> Yup. If we started at 0.5, there'd be half a tile gap in our geometry around the edge of the screen. Even if a wall went all the way to the edge of the screen, we could push a narrow box between the wall and the edge. So we want to sample and extra tile out, and then we'll clamp the data in the next step.
+</p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Create a sampler using a block that samples the tilemap in tile coordinates.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkBlockSampler *sampler = [[ChipmunkBlockSampler <span style="color:#ff0000;">alloc</span>] <span style="color:#6c0540;">initWithBlock:</span>^(cpVect point){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+<p>
+ChipmunkBlockSampler is a convenient way of using an <A href="http://developer.apple.com/library/ios/#documentation/cocoa/Conceptual/Blocks/Articles/bxGettingStarted.html#//apple_ref/doc/uid/TP40007502-CH7-SW1">Objective-C block</A>, as noted by the ^. The block has an argument cpVect point and should return a float. 
+</p>
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Clamp the point so that samples outside the tilemap bounds will sample the edges.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point = <span style="color:#003369;">cpBBClampVect</span>(<span style="color:#003369;">cpBBNew</span>(<span style="color:#0000ff;">0.5</span>, <span style="color:#0000ff;">0.5</span>, tileCountW - <span style="color:#0000ff;">0.5</span>, tileCountH - <span style="color:#0000ff;">0.5</span>), point);</div>
+<p>
+First, we clamp the point vector to deal with the border of the map. In the event the the sampler asks for coordinates outside of the tilemap, we want a reasonable response. Clamping ranges outside of the bounds of the tilemap onto the edge is reasonable. We could also just return 1.0 for anything outside of the bounds, or we could wrap the coordinates. 
+</p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// The samples will always be at tile centers.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// So we just need to truncate to an integer to convert to tile coordinates.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">int</span> x = point.x;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">int</span> y = point.y;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Flip the y-coord (Cocos2D tilemap coords are flipped this way)<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y = tileCountH - <span style="color:#0000ff;">1</span> - y;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Look up the tile to see if we set a Collidable property in the Tileset meta layer<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#400080;">NSDictionary</span> *properties = [_tileMap <span style="color:#6c0540;">propertiesForGID:</span>[_meta <span style="color:#6c0540;">tileGIDAt:</span><span style="color:#003369;">ccp</span>(x, y)]];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">BOOL</span> collidable = [[properties <span style="color:#6c0540;">valueForKey:</span><span style="color:#760f15;">@&quot;Collidable&quot;</span>] <span style="color:#6c0540;">isEqualToString:</span><span style="color:#760f15;">@&quot;True&quot;</span>];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// If the tile is collidable, return a density of 1.0 (meaning solid)<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Otherwise return a density of 0.0 meaning completely open.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">return</span><span style="color:#003369;"> </span>(collidable ? <span style="color:#0000ff;">1.0f</span> : <span style="color:#0000ff;">0.0f</span>);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}];<br />
+</div>
+
+<p>
+This is the rest of the sampling function! We truncate our sampling points; the tile that has a center at (3.5f, 2.5f) is stored in our tilemap just as (3, 2). So after we flip things upside down (no one ever agrees if y=0 is on the top or bottom...) we look up the tile in the _meta layer to see if we have marked it "Collidable". This is how we painted our tiles in the Tiled editor. Finally, if it's collidable, we return 1.0, otherwise we return 0.0.
+</p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;ChipmunkPolylineSet * polylines = [sampler <span style="color:#6c0540;">march:</span>sampleRect <span style="color:#6c0540;">xSamples:</span>tileCountH + <span style="color:#0000ff;">2</span> <span style="color:#6c0540;">ySamples:</span>tileCountH + <span style="color:#0000ff;">2</span> <span style="color:#6c0540;">hard:</span>TRUE];<br />
+</div>
+
+<p>
+Here's where the magic happens! The <strong>march</strong> function on the sampler we created takes the sampleRect as an argument. It will run it's algorithm on each tile in the sampleRect. It will do xSamples across the x-axis, and because the sampleRect is tileCountW + 2 tiles wide (remember we added one on the left and right edge), each sample will fall right in the center of each tile. Same for the y-axis. 
+<strong>TODO: Add a diagram of this!</strong>
+</p>
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;cpFloat tileW = _tileMap.tileSize.width;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cpFloat tileH = _tileMap.tileSize.height;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">for</span>(ChipmunkPolyline * line in polylines){</div>
+<p>
+And our work is almost over. Our march function returns a ChipmunkPolylineSet. So we loop over each polyline in that set.
+</p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkPolyline * simplified = [line <span style="color:#6c0540;">simplifyCurves:</span><span style="color:#0000ff;">0.0f</span>];<br />
+&nbsp;</div>
+<p>
+Then we use the simplifyCurves method to remove redundant points. Since we supply 0.0f as an argument, there's no fuzz factor. The lines are removed losslessly, with no changes in geometry. Because the initial polyline contains every segment created by the marching squares algorithm, we've got a lot of short segments that this will collapse into longer ones.
+</p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">for</span>(<span style="color:#881350;">int</span> i=<span style="color:#0000ff;">0</span>; i&lt;simplified.count-<span style="color:#0000ff;">1</span>; i++){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// The sampler coordinates were in tile coordinates.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Convert them to pixel coordinates by multiplying by the tile size.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cpVect a = <span style="color:#003369;">cpvmult</span>(simplified.verts[ &nbsp;<span style="color:#6c0540;">i</span>], tileW);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cpVect b = <span style="color:#003369;">cpvmult</span>(simplified.verts[i+<span style="color:#0000ff;">1</span>], tileH);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Add the shape and set some properties.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkShape *seg = [space <span style="color:#6c0540;">add:</span>[ChipmunkSegmentShape <span style="color:#6c0540;">segmentWithBody:</span>space.staticBody <span style="color:#6c0540;">from:</span>a <span style="color:#6c0540;">to:</span>b <span style="color:#6c0540;">radius:</span><span style="color:#0000ff;">1.0f</span>]];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;seg.friction = <span style="color:#0000ff;">1.0</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+</div>
+
+<p>
+Now we loop over each segment in our simplified line loop, and convert it's coordinates into pixel coordinates. Then we create and add a ChipmunkSegment just like normal.
+</p>
+
+
+<h2>Add some boxes!</h2>
+
+<p>Well, the hard part is over. Now we want to have something to push around. </p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; "><br />
+- (ChipmunkBody*)<span style="color:#6c0540;">makeBoxAtX:</span>(<span style="color:#881350;">int</span>)x <span style="color:#6c0540;">y:</span>(<span style="color:#881350;">int</span>)y<br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">float</span> mass = <span style="color:#0000ff;">0.3f</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">float</span> size = <span style="color:#0000ff;">27.0f</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkBody* body = [ChipmunkBody <span style="color:#6c0540;">bodyWithMass:</span>mass <span style="color:#6c0540;">andMoment:</span><span style="color:#003369;">cpMomentForBox</span>(mass, size, size)];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CCPhysicsSprite * boxSprite = [CCPhysicsSprite <span style="color:#6c0540;">spriteWithFile:</span><span style="color:#760f15;">@&quot;crate.png&quot;</span>];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;boxSprite.chipmunkBody = body;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;boxSprite.position = <span style="color:#003369;">cpv</span>(x,y);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkShape* boxShape = [ChipmunkPolyShape <span style="color:#6c0540;">boxWithBody:</span>body <span style="color:#6c0540;">width:</span> size <span style="color:#6c0540;">height:</span> size];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;boxShape.friction = <span style="color:#0000ff;">1.0f</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[space <span style="color:#6c0540;">add:</span>boxShape];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[space <span style="color:#6c0540;">add:</span>body];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[<span style="color:#881350;">self</span> <span style="color:#6c0540;">addChild:</span>boxSprite];<br />
+</div>
+
+<p>
+Much of this is similar to how we created our player. We create a ChipmunkBody with the mass and size that we've picked out. We've got our convenient CCPhysicsSprite created. [ChipmunkPolyShape boxWithBody] is a shortcut to creating a box shape- a rectangular polygon. Then we add the shape and body to the to the space, and add the sprite to the layer.
+</p>
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkPivotJoint* pj = [space <span style="color:#6c0540;">add:</span> [ChipmunkPivotJoint <span style="color:#6c0540;">pivotJointWithBodyA:</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[space <span style="color:#6c0540;">staticBody</span>] <span style="color:#6c0540;">bodyB:</span>body <span style="color:#6c0540;">anchr1:</span>cpvzero <span style="color:#6c0540;">anchr2:</span>cpvzero]];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;pj.maxForce = <span style="color:#0000ff;">1000.0f</span>; <span style="color:#236e25;">// emulate linear friction<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;pj.maxBias = <span style="color:#0000ff;">0</span>; <span style="color:#236e25;">// disable joint correction, don't pull it towards the anchor.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Then use a gear to fake an angular friction (slow rotating boxes)<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkGearJoint* gj = [space <span style="color:#6c0540;">add:</span> [ChipmunkGearJoint <span style="color:#6c0540;">gearJointWithBodyA:</span>[space <span style="color:#6c0540;">staticBody</span>] <span style="color:#6c0540;">bodyB:</span>body <span style="color:#6c0540;">phase:</span><span style="color:#0000ff;">0.0f</span> <span style="color:#6c0540;">ratio:</span><span style="color:#0000ff;">1.0f</span>]];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;gj.maxForce = <span style="color:#0000ff;">5000.0f</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;gj.maxBias = <span style="color:#0000ff;">0.0f</span>;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">return</span> body;<br />
+}<br />
+</div>
+<p>
+Since this is a top-down game, we need to fake friction with the "ground" that things are standing on. We do this by creating two joints, one for linear friction and one for angular friction.
+</p>
+<p>
 
 </p>
+<p>
+
+</p>
+
 
 	</body>
 </html>

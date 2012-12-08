@@ -128,14 +128,30 @@ CGPoint _lastTouchLocation;
 
 - (void)createTerrainGeometry
 {
-    // Now have the Chipmunk autogeometry  create geometry based on the tilemap!
     int tileCountW = _meta.layerSize.width;
     int tileCountH = _meta.layerSize.height;
+        
+    cpBB sampleRect = cpBBNew(-0.5, -0.5, tileCountW + 0.5, tileCountH + 0.5);
+    // So now what is up with the 0.5?
+    // So the sampler outputs geometry that fits between samples.
+    // So in order to make the lines Chipmunk spits out line up with the tile edges,
+    // You need to tell the sampler to sample at the pixel centers.
+    
+    // So, what rect do we ask it to sample?
+    // Let's look at an example on just the x-axis first:
+    // Say we want to sample 4 tile centers: 0.5, 1.5, 2.5, 3.5
+    // So the rect would be cpBBNew(0.5, ..., 3.5, ...) and would use 4 x-samples.
+    // So for a tilemap that is tileCountW wide, you'd use cpBBNew(0.5, ..., tileCountW - 0.5, ...).
+    
+    // BUT! There is one last thing to take care of. If you go from 0.5 to tileCountW - 0.5,
+    // there will be a half tile gap in the geometry at the edge of the screen.
+    // This is fixed easily enough by adding an extra sample on each edge and clamping the tile coordinates in the sample function.
+    
     
     // Create a sampler using a block that samples the tilemap in tile coordinates.
     ChipmunkBlockSampler *sampler = [[ChipmunkBlockSampler alloc] initWithBlock:^(cpVect point){
+        
         // Clamp the point so that samples outside the tilemap bounds will sample the edges.
-        // See below for why 0.5 is used here.
         point = cpBBClampVect(cpBBNew(0.5, 0.5, tileCountW - 0.5, tileCountH - 0.5), point);
         
         // Alternatively, you could wrap the coordinates around, or have a constant border value.
@@ -156,26 +172,10 @@ CGPoint _lastTouchLocation;
         // Otherwise return a density of 0.0 meaning completely open.
         return (collidable ? 1.0f : 0.0f);
     }];
-    
-    // So now what is up with the 0.5 above and below?
-    // So the sampler outputs geometry that fits between samples.
-    // So in order to make the lines Chipmunk spits out line up with the tile edges,
-    // You need to tell the sampler to sample at the pixel centers.
-    
-    // So, what rect do we ask it to sample?
-    // Let's look at an example on just the x-axis first:
-    // Say we want to sample 4 tile centers: 0.5, 1.5, 2.5, 3.5
-    // So the rect would be cpBBNew(0.5, ..., 3.5, ...) and would use 4 x-samples.
-    // So for a tilemap that is tileCountW wide, you'd use cpBBNew(0.5, ..., tileCountW - 0.5, ...).
-    
-    // BUT! There is one last thing to take care of. If you go from 0.5 to tileCountW - 0.5,
-    // there will be a half tile gap in the geometry at the edge of the screen.
-    // This is fixed easily enough by adding an extra sample on each edge and clamping the tile coordinates in the sample function.
-    cpBB sampleRect = cpBBNew(-0.5, -0.5, tileCountW + 0.5, tileCountH + 0.5);
-    
+
     // Whew! So now we have our rect, and we just need to ask it to march (trace around) our tiles using that rect,
     // and the number of samples in each direction to make which is tileCountW + 2 (because of the two extra samples at the edge).
-    ChipmunkPolylineSet * polylines = [sampler march:sampleRect xSamples:tileCountH + 2 ySamples:tileCountH + 2 hard:TRUE];
+    ChipmunkPolylineSet * polylines = [sampler march:sampleRect xSamples:tileCountW + 2 ySamples:tileCountH + 2 hard:TRUE];
     
     cpFloat tileW = _tileMap.tileSize.width;
     cpFloat tileH = _tileMap.tileSize.height;
