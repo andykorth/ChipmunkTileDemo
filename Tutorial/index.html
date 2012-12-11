@@ -348,12 +348,15 @@ Much of this is similar to how we created our player. We create a ChipmunkBody w
 Since this is a top-down game, we need to fake friction with the "ground" that things are standing on. We do this by creating two joints, one for linear friction and one for angular friction.
 </p>
 <p>
-
+Linear friction is basically what we want to simulate to make something that is moving in a straight line slow down. The maxForce basically controls how quickly the object slows down- how much force can be applied each frame until it reaches the same speed as the static body (which is zero). We set the maxBias, which we discussed briefly above. Recall that maxBias limits the maximum speed at which a joint can be corrected. For this joint, "correcting the joint" at a certain maxBias means how quickly Chipmunk will try to make the anchors move back to overlap. Because we've set the maxBias to zero, it doesn't try to correct these positions, and it ignores the fact that you are stretching the joint out. It only operates on the velocity.
 </p>
 <p>
-
+Angular friction is simulated to make a rotating object slowly stop rotating. Gear joints govern rotation, so we've chosen to use that. Here we set the maxBias and maxForce just like above.
 </p>
-
+<h2>Conclusion</h2>
+<p>
+That's it! We've covered a few advanced topics, like good ways to deal with friction in a top down game, and how to use Chipmunk's Autogeometry code. If you have questions, comments, or suggestions regarding this tutorial, feel free to email us at admin at howlingmoonsoftware.com. Also consider checking out the <A href="chipmunk-physics.net/forum/">Chipmunk Forum</A>.
+</p>
 
 	</body>
 </html>
