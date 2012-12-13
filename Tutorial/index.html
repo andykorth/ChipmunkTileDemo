@@ -49,7 +49,7 @@ This tutorial shows you how you can use Chipmunk in a top down game. It covers a
 </p>
 
 <p>
-<A href="http://www.raywenderlich.com/1163/how-to-make-a-tile-based-game-with-cocos2d">Ray Wenderlich's How to Make a Tile-Based Game with Cocos2d</A> is a starting point for this tutorial. In this tutorial, we build off that example by adding physics, smooth motion between tiles (the player doesn't snap to a tile), and collisions. If you find this tutorial moves a little too quickly, start with that one first. This example has been updated for Cocos2D 2.1.
+<A href="http://www.raywenderlich.com/1163/how-to-make-a-tile-based-game-with-cocos2d">Ray Wenderlich's How to Make a Tile-Based Game with Cocos2d</A> is a starting point for this tutorial. We'll be building off that example by adding physics, smooth motion between tiles (the player doesn't snap to a tile), and collisions. If you find this tutorial moves a little too quickly, start with that one first. This example has been updated for Cocos2D 2.1.
 </p>
 
 
@@ -166,13 +166,15 @@ One nice thing about working with Chipmunk in Cocos2d is easy debugging of shape
 </div>
 
 <p>
-And we do three things here. We create the player, then we create the terrain geometry, then add some boxes. After that there's a little cleanup by making sure the view starts centered on the player and that the Cocos2d update method is scheduled to be called. Let's look at each of these individually.
+We do three things here: we create the player, create the terrain geometry, then add some boxes. After that there's a little cleanup by making sure the view starts centered on the player and that the Cocos2d update method is scheduled to be called. Let's look at each of these individually.
 </p>
 
 <h2>Creating a Top Down Player using Chipmunk:</h2>
 <p>
-Our goal is to have a player that smoothly moves through the world, slides along walls without gettings stuck, and can push around blocks. From the perspective of controls, we also want them to quickly and smoothly start and stop moving. So let's get to the code!
+Our goal is to have a player that smoothly moves through the world, slides along walls without getting stuck, and can push around blocks. From the perspective of controls, we also want them to quickly and smoothly start and stop moving. So let's get to the code!
 </p>
+
+<p><em>TODO: should mention it's not using ChipmunkObject somewhere.</em></p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">- (<span style="color:#881350;">void</span>)<span style="color:#6c0540;">createPlayer:</span>(<span style="color:#881350;">int</span>)y <span style="color:#6c0540;">x:</span>(<span style="color:#881350;">int</span>)x<br />
 {<br />
@@ -189,10 +191,10 @@ Our goal is to have a player that smoothly moves through the world, slides along
 &nbsp;&nbsp;&nbsp;&nbsp;[<span style="color:#881350;">self</span> <span style="color:#6c0540;">addChild:</span>_player];</div>
 
 <p>
-First, we set up the ChipmunkBody for the player. We create it with a mass of 1.0 and an infinite moment of inertia. That infinite moment will prevent the player from rotating. A player that could rotate would start spinning when you slide against walls. And when a rotating player came in contact with something they could push, like a box, the friction between the player and the box would cause it to move in a weird way.
+First, we set up the ChipmunkBody for the player. We create it with a mass of 1.0 and an infinite moment of inertia. The moment of inertia is like mass for how hard something is to rotate. By using an infinite moment, it will prevent the player from rotating ever as no finite force could make it happen. If the player could rotate, then it would start spinning when you slide against walls. And when a rotating player came in contact with something they could push, like a box, the friction between the player and the box would cause it to move in a weird way.
 </p>
 <p>
-_player is our CCSprite- in this case, a CCPhysicsSprite. CCPhysicsSprite is a subclass of CCSprite that ties the sprite to a physics body. When the physics body moves around, the sprite also moves- in fact what happens behind the scene is that the sprite just accesses the physics body for position, rotation, etc. We set the body of the physics sprite to the ChipmunkBody we just made, and then set the position to (x, y), the position of the spawn point we passed in as an argument. 
+<code>_player</code> is our CCSprite, in this case, a CCPhysicsSprite. CCPhysicsSprite is a subclass of CCSprite that ties the sprite to a physics body. When the physics body moves around, the sprite also moves too. In fact what happens behind the scene is that the sprite just uses the body's position and rotation instead of its own. We set the body of the physics sprite to the ChipmunkBody we just made, and then set the position to (x, y), the position of the spawn point we passed in as an argument. 
 </p>
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ChipmunkShape *playerShape = [space <span style="color:#6c0540;">add:</span>[ChipmunkCircleShape <span style="color:#6c0540;">circleWithBody:</span>playerBody <span style="color:#6c0540;">radius:</span>playerRadius <span style="color:#6c0540;">offset:</span>cpvzero]];<br />
