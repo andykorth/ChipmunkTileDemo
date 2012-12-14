@@ -312,7 +312,7 @@ This is the rest of the sampling function! First, we truncate our sampling point
 </div>
 
 <p>
-Here's where the magic happens! The <strong>march</strong> function on the sampler we created takes the sampleRect as an argument. It will run it's algorithm on each tile in the sampleRect. It will do xSamples across the x-axis, and because the sampleRect is tileCountW + 2 tiles wide (remember we added one on the left and right edge), each sample will fall right in the center of each tile. Same for the y-axis. 
+Here's where the magic happens! The <code>march</code> function on the sampler we created takes the sampleRect as an argument. It will run it's algorithm on each tile in the sampleRect. It will do xSamples across the x-axis, and because the sampleRect is tileCountW + 2 tiles wide (remember we added one on the left and right edge), each sample will fall right in the center of each tile. Same for the y-axis. 
 <strong>TODO: Add a diagram of this!</strong>
 </p>
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;cpFloat tileW = _tileMap.tileSize.width;<br />
@@ -371,7 +371,7 @@ Now we loop over each segment in our simplified line loop, and convert it's coor
 </div>
 
 <p>
-Much of this is similar to how we created our player. We create a ChipmunkBody with the mass and size that we've picked out. We've got our convenient CCPhysicsSprite created. [ChipmunkPolyShape boxWithBody] is a shortcut to creating a box shape- a rectangular polygon. Then we add the shape and body to the to the space, and add the sprite to the layer.
+Much of this is similar to how we created our player. We create a ChipmunkBody with the mass and size that we've picked out. We've got our convenient CCPhysicsSprite created. <code>[ChipmunkPolyShape boxWithBody]</code> is a shortcut to creating a box shape- a rectangular polygon. Then we add the shape and body to the to the space, and add the sprite to the layer.
 </p>
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkPivotJoint* pj = [space <span style="color:#6c0540;">add:</span> [ChipmunkPivotJoint <span style="color:#6c0540;">pivotJointWithBodyA:</span><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[space <span style="color:#6c0540;">staticBody</span>] <span style="color:#6c0540;">bodyB:</span>body <span style="color:#6c0540;">anchr1:</span>cpvzero <span style="color:#6c0540;">anchr2:</span>cpvzero]];<br />
