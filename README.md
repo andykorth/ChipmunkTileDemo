@@ -1,7 +1,7 @@
 Chipmunk Tile Tutorial.
 =
 
-<div style="float:right;">![Screenshot](http://kortham.net/temp/chipmunkTileTutorial.png)</div>
+<div style="float:right;"><img src="http://kortham.net/temp/chipmunkTileTutorial.png"/></div>
 
 This is a Chipmunk Physics tutorial that shows you how you can use Chipmunk Pro in a top-down, tile-based game. The tutorial covers an easy way to set up controls and an easy way to generate the collision shape of a tilemap.
 
