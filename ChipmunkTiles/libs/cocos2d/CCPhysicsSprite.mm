@@ -137,7 +137,6 @@
 }
 
 // returns the transform matrix according the Chipmunk Body values
-// returns the transform matrix according the Chipmunk Body values
 -(CGAffineTransform) nodeToParentTransform
 {
 	b2Vec2 pos  = _body->GetPosition();

@@ -111,7 +111,7 @@ CGPoint _lastTouchLocation;
     
     // now create a control body. We'll move this around and use joints to do the actual player 
     // motion based on the control body
-    targetPointBody = [[ChipmunkBody alloc] initStaticBody];
+    targetPointBody = [ChipmunkBody bodyWithMass:INFINITY andMoment:INFINITY];
     targetPointBody.pos = ccp(x,y); // make the player's target destination start at the same place the player.
     
     ChipmunkPivotJoint* joint = [space add:[ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody bodyB:playerBody anchr1:cpvzero anchr2:cpvzero]];
@@ -179,6 +179,7 @@ CGPoint _lastTouchLocation;
     
     cpFloat tileW = _tileMap.tileSize.width;
     cpFloat tileH = _tileMap.tileSize.height;
+    
     for(ChipmunkPolyline * line in polylines){
         // Each polyline represents a chain of segments or a loop of segments found in the tileset.
         // Run an exact simplification on the polyline to remove extra vertexes,
@@ -187,10 +188,12 @@ CGPoint _lastTouchLocation;
         
         // Separate polyline into segments.
         for(int i=0; i<simplified.count-1; i++){
+            
             // The sampler coordinates were in tile coordinates.
             // Convert them to pixel coordinates by multiplying by the tile size.
-            cpVect a = cpvmult(simplified.verts[  i], tileW);
-            cpVect b = cpvmult(simplified.verts[i+1], tileH);
+            cpFloat tileSize = tileH; // fortunately our tiles are square, otherwise we'd need to multiply components independently
+            cpVect a = cpvmult(simplified.verts[  i], tileSize);
+            cpVect b = cpvmult(simplified.verts[i+1], tileSize);
             
             // Add the shape and set some properties.
             ChipmunkShape *seg = [space add:[ChipmunkSegmentShape segmentWithBody:space.staticBody from:a to:b radius:1.0f]];

@@ -45,7 +45,7 @@
 <img src="images/final.png" width="320" style="float:right;"/>
 
 <p>
-This tutorial shows you how you can use Chipmunk in a top down game. It covers an easy way to set up controls and an easy way to generate the collision shape of a tilemap.
+This tutorial shows you how you can use Chipmunk Pro in a top down game. It covers an easy way to set up controls and an easy way to generate the collision shape of a tilemap.
 </p>
 
 <p>
@@ -61,7 +61,7 @@ This tutorial shows you how you can use Chipmunk in a top down game. It covers a
 
 <h2>What Do You Need to Know First?</h2>
 
-<p>This tutorial assumes you have some prior experience with Cocos2D development. It doesn't go into how Cocos2D itself works, although the project is pretty simple. We also assume you know how to use Tiled and a few other things covered in <A href="http://www.raywenderlich.com/1163/how-to-make-a-tile-based-game-with-cocos2d">this tutorial</A>.</p>
+<p>This tutorial assumes you have some prior experience with Cocos2D development. It doesn't go into how Cocos2D itself works, although the project is pretty simple. We also assume you know how to use Tiled and a few other things covered in <A href="http://www.raywenderlich.com/1163/how-to-make-a-tile-based-game-with-cocos2d">this tutorial</A> by Ray Wenderlich.</p>
 
 <h2>What is Chipmunk?</h2>
 
@@ -89,8 +89,14 @@ This tutorial shows you how you can use Chipmunk in a top down game. It covers a
 &nbsp;&nbsp;&nbsp;&nbsp;CCPhysicsSprite *_player;<br />
 }</div>
 
+<div style="float:right; border-style:solid; border-width:1px; margin:15px;">
+<img src="http://kortham.net/temp/tutorialMeta.png" width="250"><br/>
+</div>
+<div style="float:right; border-style:solid; border-width:1px; margin:15px;">
+<img src="http://kortham.net/temp/tutorialBackground.png" width="250">
+</div>
 <p>
-The CCTMX classes are used for reading the tile map. Remember, the <code>_background</code> layer contains the tile artwork, such as the desert, the cacti, the roads, and the walls. The  <code>_meta</code> layer contains <A HREF="http://www.raywenderlich.com/1186/collisions-and-collectables-how-to-make-a-tile-based-game-with-cocos2d-part-2">hand-painted collision information</A>. Of course, there are other approaches that might work better in your game, but we're going to roll with this approach.
+The CCTMX classes are used for reading the tile map. Remember, the <code>_background</code> layer contains the tile artwork, such as the desert, the cacti, the roads, and the walls. The <code>_meta</code> layer contains <A HREF="http://www.raywenderlich.com/1186/collisions-and-collectables-how-to-make-a-tile-based-game-with-cocos2d-part-2">hand-painted collision information</A>. Of course, there are other approaches that might work better in your game, but we're going to roll with this approach.
 </p>
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">CCPhysicsSprite *_player</div>
 <p>CCPhysicsSprite is a new class in Cocos2d 2.1. Developers often struggle with making their graphics line up with a physics simulation, and this class is very helpful in that regard. Each time the physics simulation updates the position or rotation of an object in the world, the sprite is updated to reflect that. It is a subclass of CCSprite; if you are familiar with that class, the use is similar.</p>
@@ -118,7 +124,7 @@ The CCTMX classes are used for reading the tile map. Remember, the <code>_backgr
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span style="color:#881350;">self</span> <span style="color:#6c0540;">addChild:</span>_tileMap <span style="color:#6c0540;">z:</span>-<span style="color:#0000ff;">1</span>];<br />
 </div>
 
-<p>Basic setup of this Cocos2d layer includes stuff like enabling touches, loading the tilemap, and adding it to the layer. Confused? Check <A href="http://www.raywenderlich.com/1163/how-to-make-a-tile-based-game-with-cocos2d">this tutorial</A>.
+<p>Here we have basic setup of this Cocos2d layer. This includes stuff like enabling touches, loading the tilemap, and adding it to the layer. Confused? Start with <A href="http://www.raywenderlich.com/1163/how-to-make-a-tile-based-game-with-cocos2d">this tutorial</A>.
 </p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
@@ -145,7 +151,7 @@ Tiled supports annotating the map with specific information. So we've done so wi
 </div>
 
 <p>
-One nice thing about working with Chipmunk in Cocos2d is easy debugging of shapes with <code>CCPhysicsDebugNode</code>. This node draws all the objects in your physics space to the scene. So if you've got graphics that don't line up with your simulation, or you've forgotten to place a wall, you can easily determine what is going on. These two lines add that debug drawing.
+One nice thing about working with Chipmunk in Cocos2d is easy debugging of shapes with CCPhysicsDebugNode. This node draws all the objects in your physics space to the scene. So if you've got graphics that don't line up with your simulation, or you've forgotten to place a wall, you can easily determine what is going on. These two lines add that debug drawing.
 </p>
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// We've broken out the creation of the player and terrain into separate methods<br />
 </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span style="color:#881350;">self</span> <span style="color:#6c0540;">createPlayer:</span>y <span style="color:#6c0540;">x:</span>x];<br />
@@ -208,11 +214,11 @@ Although we're thinking of this as a top-down game, the friction component does 
 </p>
 
 
-<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;targetPointBody = [[ChipmunkBody <span style="color:#ff0000;">alloc</span>] <span style="color:#6c0540;">initStaticBody</span>];<br />
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;targetPointBody = [ChipmunkBody <span style="color:#6c0540;">bodyWithMass:</span>INFINITY <span style="color:#6c0540;">andMoment:</span>INFINITY];<br />
 &nbsp;&nbsp;&nbsp;&nbsp;targetPointBody.pos = <span style="color:#003369;">ccp</span>(x,y); <span style="color:#236e25;">// make the player's target destination start at the same place the player.<br />
 </span></div>
 <p>
-We use a static body as a control body. This control body represents the target destination of the player. Because this is an iOS demo, we decided to go with a control scheme where you tap a point on the screen, and the character moves towards it. If you hold down your finger, the player keeps moving in that direction. So when it's time to handle input, it's very simple, we just set the position of the control body to the touch.
+We create a infinite mass body to use as a control body. This control body represents the target destination of the player.  Infinite mass and moment of inertia means this object won't ever move on its own- we'll be moving it ourselves when the player touches the screen. Because this is an iOS demo, we decided to go with a control scheme where you tap a point on the screen, and the character moves towards it. If you hold down your finger, the player keeps moving in that direction. So when it's time to handle input, it's very simple, we just set the position of the control body to the touch.
 </p>
 <p>
 But how is this static body used to control the motion of the player?
@@ -222,12 +228,12 @@ But how is this static body used to control the motion of the player?
 &nbsp;&nbsp;&nbsp;&nbsp;joint.maxForce = <span style="color:#0000ff;">3000.0f</span>;</div>
 
 <p>
-In short, this joint controls the motion of the player by tying together the static <strong>targetPointBody</strong> and the <strong>playerBody</strong>. MaxForce controls the player's pushing power, and maxBias controls the correction speed (ie: the speed the player moves across the ground).
+In short, this joint controls the motion of the player by tying together the static <code>targetPointBody</code> and the <code>playerBody</code>. MaxForce controls the player's pushing power, and maxBias controls the correction speed (ie: the speed the player moves across the ground).
 </p>
 
 <div style="display:block; margin:20px;"><a class="HideShow" href="javascript:;" onmousedown="toggleExample('HowDoesItWork', 'examples/Hello%20Chipmunk.html');">I want to know the details!</a><div id="HowDoesItWork" style="display: none;">
 <p>
-Joints control the motion of the player. Our pivot joint pulls the player towards the targetPointBody. Because that's a static body, only the player moves (unless we explicitly set the position of targetPointBody). It sort of acts like a spring or a rubber band, with the player constantly trying to move towards the control point, but it's simpler than that. There's no springy-ness to the motion- we have just two values to tweak:
+Joints control the motion of the player. Our pivot joint pulls the player towards the targetPointBody. Because that's a static body, only the player moves (unless we explicitly set the position of targetPointBody). It sort of acts like a spring or a rubber band, with the player constantly trying to move towards the control point, but it's simpler than that. There's no springy-ness to the motion—we have just two values to tweak:
 </p>
 <p>
 <strong>maxBias</strong> controls the maximum speed at which a joint can be corrected. So if our playerBody is far away from the targetPointBody, there's a limit to how far per second the player is pulled towards the targetPointBody. So this is really a max speed for the player's motion across the world. This works great for our game since we want the player to move at the same speed if he's going horizontally, vertically, or diagonally.
@@ -249,10 +255,41 @@ And finally, by using a control point and a joint, we don't have to worry calcul
 <p>For even more info, check out <A href="http://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpConstraint-ErrorCorrection">this page in the Chipmunk Manual</A>.
 </div></div>
 
+<h2>The Update method:</h2>
+<p>
+Our update method is scheduled to run each frame. The first thing we do here is handle the input.
+</p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">-(<span style="color:#881350;">void</span>)<span style="color:#6c0540;">update:</span>(ccTime)dt<br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// update player motion based on last touch, if we have our finger down:<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">if</span>(isTouching){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// the screen may have moved, so convert the screen space touch location to one in world (node) space.<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#400080;">CGPoint</span> touchLocation = [<span style="color:#881350;">self</span> <span style="color:#6c0540;">convertToNodeSpace:</span> [[CCDirector <span style="color:#6c0540;">sharedDirector</span>] <span style="color:#6c0540;">convertToGL:</span> _lastTouchLocation]];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;targetPointBody.pos = touchLocation;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+</div>
+<p>
+If we're touching the screen, we want to move the position of <code>targetPointBody</code> to match the touch location, in node space coordinates (meaning the position in the world, not a screen-relative coordinate). 
+</p>
+
+<div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Update the physics<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;ccTime fixed_dt = [CCDirector <span style="color:#6c0540;">sharedDirector</span>].animationInterval;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[space <span style="color:#6c0540;">step:</span>fixed_dt];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">//update camera<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;[<span style="color:#881350;">self</span> <span style="color:#6c0540;">setViewpointCenter:</span>playerBody.pos];<br />
+}<br />
+</div>
+<p>
+Then we step the physics—this is when the physics engine runs and updates the position of everything in the game. And finally we update the camera so it's centered on the player's current position.
+</p>
+
 
 <h2>Creating the terrain geometry using Chipmunk's Autogeometry features:</h2>
 <p>
-Let's start with a brief rundown on how the you can write different samplers for Chipmunk's auto-geometry features. Samplers are used by Chipmunk to create geometry by looking at specific points; you could think of it as a density function. A sampling function takes a point (a cpVect) as an argument, and returns the density at that location. Image samplers are an easy example of a sampling function. The sampling function would just look at the image at (x, y) and return the color or alpha of the image at that pixel.
+Let's start with a brief rundown on how the you can write different samplers for Chipmunk's auto-geometry feature. Samplers are used by Chipmunk to create geometry by looking at specific points; you could think of it as a density function. A sampling function takes a point (a cpVect) as an argument, and returns the density at that location. Image samplers are an easy example of a sampling function. The sampling function would just look at the image at (x, y) and return the color or alpha of the image at that pixel.
 </p>
 <p>
 Sampling functions could work anyway you imagine. Sampling images is common, but they could sample a noise function, or a fractal pattern, or anything you could imagine. Here we're going to sample the tilemap. 
@@ -265,7 +302,7 @@ Sampling functions could work anyway you imagine. Sampling images is common, but
 &nbsp;&nbsp;&nbsp;&nbsp;cpBB sampleRect = <span style="color:#003369;">cpBBNew</span>(<span style="color:#0000ff;">-0.5</span>, <span style="color:#0000ff;">-0.5</span>, tileCountW + <span style="color:#0000ff;">0.5</span>, tileCountH + <span style="color:#0000ff;">0.5</span>);</div>
 
 <p>
-We'll be using the <strong>cpBB sampleRect</strong> later to tell the autogeometry the range that it should look at. It goes from approximately (0, 0) to (tileCountW, tileCountH)... the width and height of the tilemap. I know you already want to know what's up with the halfs- the 0.5f. There are two things we're doing here:
+We'll be using the <code>cpBB sampleRect</code> later to tell the autogeometry the range that it should look at. It goes from approximately (0, 0) to (tileCountW, tileCountH)... the width and height of the tilemap. I know you already want to know what's up with the halfs—the 0.5f. There are two things we're doing here:
 </p>
 <p>
 First, we're sampling from the center of tiles. (0, 0) is the top left corner of our top left tile. (1, 0) is the  top left corner of the next tile to the right. We want our geometry centered at the center of the tile- not centered over the corner of tiles. This way the collision edges line up with the edges of the tiles. So, (0.5, 0.5) is the center of the top-left tile.
@@ -305,7 +342,7 @@ First, we clamp the point vector to deal with the border of the map. In the even
 </div>
 
 <p>
-This is the rest of the sampling function! We truncate our sampling points; the tile that has a center at (3.5f, 2.5f) is stored in our tilemap just as (3, 2). So after we flip things upside down (no one ever agrees if y=0 is on the top or bottom...) we look up the tile in the _meta layer to see if we have marked it "Collidable". This is how we painted our tiles in the Tiled editor. Finally, if it's collidable, we return 1.0, otherwise we return 0.0.
+This is the rest of the sampling function! We truncate our sampling points; the tile that has a center at (3.5f, 2.5f) is stored in our tilemap just as (3, 2). So after we flip things upside down (no one ever agrees if y=0 is on the top or bottom...) we look up the tile in the <code>_meta</code> layer to see if we have marked it "Collidable". This is how we painted our tiles in the Tiled editor. Finally, if it's collidable, we return 1.0, otherwise we return 0.0.
 </p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;ChipmunkPolylineSet * polylines = [sampler <span style="color:#6c0540;">march:</span>sampleRect <span style="color:#6c0540;">xSamples:</span>tileCountH + <span style="color:#0000ff;">2</span> <span style="color:#6c0540;">ySamples:</span>tileCountH + <span style="color:#0000ff;">2</span> <span style="color:#6c0540;">hard:</span>TRUE];<br />
@@ -325,14 +362,16 @@ And our work is almost over. Our march function returns a ChipmunkPolylineSet. S
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkPolyline * simplified = [line <span style="color:#6c0540;">simplifyCurves:</span><span style="color:#0000ff;">0.0f</span>];<br />
 &nbsp;</div>
 <p>
-Then we use the simplifyCurves method to remove redundant points. Since we supply 0.0f as an argument, there's no fuzz factor. The lines are removed losslessly, with no changes in geometry. Because the initial polyline contains every segment created by the marching squares algorithm, we've got a lot of short segments that this will collapse into longer ones.
+Then we use the <code>simplifyCurves</code> method to remove redundant points. Since we supply 0.0f as an argument, there's no fuzz factor. The lines are removed losslessly, with no changes in geometry. Because the initial polyline contains every segment created by the marching squares algorithm, we've got a lot of short segments that this will collapse into longer ones.
 </p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">for</span>(<span style="color:#881350;">int</span> i=<span style="color:#0000ff;">0</span>; i&lt;simplified.count-<span style="color:#0000ff;">1</span>; i++){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// The sampler coordinates were in tile coordinates.<br />
 </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Convert them to pixel coordinates by multiplying by the tile size.<br />
-</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cpVect a = <span style="color:#003369;">cpvmult</span>(simplified.verts[ &nbsp;<span style="color:#6c0540;">i</span>], tileW);<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cpVect b = <span style="color:#003369;">cpvmult</span>(simplified.verts[i+<span style="color:#0000ff;">1</span>], tileH);<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cpFloat tileSize = tileH; <span style="color:#236e25;">// fortunately our tiles are square, otherwise we'd need to multiply components independently<br />
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cpVect a = <span style="color:#003369;">cpvmult</span>(simplified.verts[ &nbsp;<span style="color:#6c0540;">i</span>], tileSize);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cpVect b = <span style="color:#003369;">cpvmult</span>(simplified.verts[i+<span style="color:#0000ff;">1</span>], tileSize);<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Add the shape and set some properties.<br />
 </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkShape *seg = [space <span style="color:#6c0540;">add:</span>[ChipmunkSegmentShape <span style="color:#6c0540;">segmentWithBody:</span>space.staticBody <span style="color:#6c0540;">from:</span>a <span style="color:#6c0540;">to:</span>b <span style="color:#6c0540;">radius:</span><span style="color:#0000ff;">1.0f</span>]];<br />
