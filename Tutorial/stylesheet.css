@@ -1,6 +1,10 @@
-h1, h2 {
+body {
     font-family:Tahoma;
+}
+
+h1, h2 {
  	padding: 0.25em;
+ 	padding-left: 0.4em;
 	border-radius: 0.25em;
 }
 
