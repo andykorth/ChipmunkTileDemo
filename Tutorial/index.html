@@ -55,8 +55,6 @@ This tutorial shows you how you can use Chipmunk Pro in a top down game. It cove
 
 <p>You should know the basics about Chipmunk such as how to create spaces, bodies and shapes. You might want to read up on some of the documentation or the Chipmunk Basics tutorial on the <a href="http://chipmunk-physics.net/documentation.php">documentation page</a>.</p>
 
-<p><em>TODO: I either haven't made the Chipmunk Basics tutorial yet or forgot to remove this reminder to myself. Please send me an email if I've forgotten. ;)</em></p>
-
 <p><strong>You can download this tutorial and all the project files from the <a href="https://github.com/andykorth/ChipmunkTileDemo">GitHub page</a>. These are ready to build!</strong></p>
 
 <h2>What Do You Need to Know First?</h2>
@@ -179,8 +177,6 @@ We do three things here: we create the player, create the terrain geometry, then
 <p>
 Our goal is to have a player that smoothly moves through the world, slides along walls without getting stuck, and can push around blocks. From the perspective of controls, we also want them to quickly and smoothly start and stop moving. So let's get to the code!
 </p>
-
-<p><em>TODO: should mention it's not using ChipmunkObject somewhere.</em></p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">- (<span style="color:#881350;">void</span>)<span style="color:#6c0540;">createPlayer:</span>(<span style="color:#881350;">int</span>)y <span style="color:#6c0540;">x:</span>(<span style="color:#881350;">int</span>)x<br />
 {<br />
@@ -447,6 +443,9 @@ Linear friction is basically what we want to simulate to make something that is 
 <p>
 Angular friction is simulated to make a rotating object slowly stop rotating. Gear joints govern rotation, so we've chosen to use that. Here we set the maxBias and maxForce just like above. By using a gear joint with a gear ratio of 1.0, you are asking Chipmunk to try and make the objects spin at the same speed. In this case, just 0.
 </p>
+
+<p>In this example, we're not using the ChipmunkObject protocol, which can simplify adding  physics objects, especially ones more complicated than our boxes. Once you get this tutorial working, you should look into it for your game. It's covered in the <a href="https://github.com/slembcke/ChipmunkColorMatch">Chipmunk Color Match Tutorial</A>.</p>
+
 <h2>Conclusion</h2>
 <p>
 That's it! We've covered a few advanced topics, like good ways to deal with friction in a top down game, and how to use Chipmunk's Autogeometry code in a tile based game. If you have questions, comments, or suggestions regarding this tutorial, feel free to email us at admin at howlingmoonsoftware.com. Also consider checking out the <A href="chipmunk-physics.net/forum/">Chipmunk Forum</A>.
