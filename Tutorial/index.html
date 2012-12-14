@@ -201,7 +201,7 @@ First, we set up the ChipmunkBody for the player. We create it with a mass of 1.
 &nbsp;&nbsp;&nbsp;&nbsp;playerShape.friction = <span style="color:#0000ff;">0.1</span>;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;</div>
 <p>
-Circles make good representations of just about any character. Before you think you need a more complicated polygon, please start with a circle- there are several advantages. Most importantly, circles have no edges or corners that get caught on other geometry. Since they have a constant radius, you are always sure of the size of the player and what they can fit into. We set a little friction, mostly to dictate how our player interacts with other objects.
+Circles make good representations of just about any character. Before you think you need a more complicated polygon, start with a circle as there are several advantages. Most importantly, circles have no edges or corners that get caught on other geometry. Since they have a constant radius, you are always sure of the size of the player and what they can fit into. We set a little friction, mostly to dictate how our player interacts with other objects.
 </p>
 <p>
 Although we're thinking of this as a top-down game, the friction component does not represent the player's friction with the ground. There isn't a 'ground' object in our game- you're just always in contact with the ground. We'll get to this more later.
@@ -212,7 +212,7 @@ Although we're thinking of this as a top-down game, the friction component does 
 &nbsp;&nbsp;&nbsp;&nbsp;targetPointBody.pos = <span style="color:#003369;">ccp</span>(x,y); <span style="color:#236e25;">// make the player's target destination start at the same place the player.<br />
 </span></div>
 <p>
-We use a static body as a control body. This control body represents the target destination of the player. Because this is an iOS demo, we decided to go with a control scheme where you tap a point on the screen, and the character moves towards it. If you hold down your finger, the player keeps moving in that direction. So when it's time to handle input, it's very simple, we just set the position of the control body to the touch.
+We use a static body as a "control body". This control body represents the target destination of the player. Because this is an iOS demo, we decided to go with a control scheme where you tap a point on the screen, and the character moves towards it. If you hold down your finger, the player keeps moving in that direction. So when it's time to handle input, it's very simple, we just set the position of the control body to the touch.
 </p>
 <p>
 But how is this static body used to control the motion of the player?
@@ -241,10 +241,10 @@ Joints control the motion of the player. Our pivot joint pulls the player toward
 <p>
 <em>Well then, how about just setting the velocity each frame?</em>  This is an improvement! By setting the velocity, the physics engine solver can set the position and does a better job of ensuring the object doesn't move into another piece of geometry. When you have a collision, the engine knows the speed of the colliding objects and can calculate how they get knocked back.</p>
 <p>
-Follow along with me. Place our hand on a wall... then apply a velocity to it- into the wall. You can't. You can apply a force. (Hopefully your personal maxForce is not enough to move your wall.. otherwise, I'm sorry for broke your wall). So you could apply forces instead. That works great for things like cannons, but continual forces can be awkward when you've got a character that you want to maintain moving at a constant speed.
+Follow along with me. Place our hand on a wall... then apply a velocity to it- into the wall. You can't. You can apply a force. (Hopefully your personal maxForce is not enough to move your wall.. otherwise, I'm sorry for broke your wall). So you could apply forces instead. Setting the velocity works great for things like firing a cannonball, but when you change it every frame it can cause <em>huge</em> collision forces when the player hits something. Put another way, when push on a wall you can only apply so much force. When you slap a wall, there is a very large by short force that occurs between your hand an the wall to slow it down quickly. Now imagine slapping a wall a hundred times a second. That's what you are doing by setting the velocity every frame.
 </p>
 <p>
-And finally, by using a control point and a joint, we don't have to worry calculating if we're close to our destination point and adjusting the force or velocity. We also get to slide around edges of walls. Pretty slick for just a few lines of code!
+And finally, by using a control body and a joint, we don't have to worry calculating if we're close to our destination point and adjusting the force or velocity. We also get to slide around edges of walls automatically. Pretty slick for just a few lines of code!
 </p>
 <p>For even more info, check out <A href="http://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpConstraint-ErrorCorrection">this page in the Chipmunk Manual</A>.
 </div></div>
@@ -255,7 +255,7 @@ And finally, by using a control point and a joint, we don't have to worry calcul
 Let's start with a brief rundown on how the you can write different samplers for Chipmunk's auto-geometry features. Samplers are used by Chipmunk to create geometry by looking at specific points; you could think of it as a density function. A sampling function takes a point (a cpVect) as an argument, and returns the density at that location. Image samplers are an easy example of a sampling function. The sampling function would just look at the image at (x, y) and return the color or alpha of the image at that pixel.
 </p>
 <p>
-Sampling functions could work anyway you imagine. Sampling images is common, but they could sample a noise function, or a fractal pattern, or anything you could imagine. Here we're going to sample the tilemap. 
+Sampling images is common because it's easy, but you could sample a noise function, a fractal pattern, or any number of things. Here we're going to sample the tilemap. 
 </p>
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">- (<span style="color:#881350;">void</span>)<span style="color:#6c0540;">createTerrainGeometry</span><br />
 {<br />
@@ -265,13 +265,13 @@ Sampling functions could work anyway you imagine. Sampling images is common, but
 &nbsp;&nbsp;&nbsp;&nbsp;cpBB sampleRect = <span style="color:#003369;">cpBBNew</span>(<span style="color:#0000ff;">-0.5</span>, <span style="color:#0000ff;">-0.5</span>, tileCountW + <span style="color:#0000ff;">0.5</span>, tileCountH + <span style="color:#0000ff;">0.5</span>);</div>
 
 <p>
-We'll be using the <strong>cpBB sampleRect</strong> later to tell the autogeometry the range that it should look at. It goes from approximately (0, 0) to (tileCountW, tileCountH)... the width and height of the tilemap. I know you already want to know what's up with the halfs- the 0.5f. There are two things we're doing here:
+We'll be using the <strong>cpBB sampleRect</strong> later to tell the autogeometry the range that it should look at. It goes from approximately (0, 0) to (tileCountW, tileCountH)... the width and height of the tilemap. I know you already want to know what's up with the 0.5's. There are two things we're doing here:
 </p>
 <p>
-First, we're sampling from the center of tiles. (0, 0) is the top left corner of our top left tile. (1, 0) is the  top left corner of the next tile to the right. We want our geometry centered at the center of the tile- not centered over the corner of tiles. This way the collision edges line up with the edges of the tiles. So, (0.5, 0.5) is the center of the top-left tile.
+First, we're sampling from the center of tiles. (0, 0) is the top left corner of our top left tile. (1, 0) is the  top left corner of the next tile to the right. If you sampled at (1, 1), it's the corner between 4 tiles. What would the terrain's density be there? Also, the geometry will show up between the samples, and for that to line up with the tile geometry we have to sample between the edges, or at the centers of the tiles.
 </p>
 <p>
-<em>But we start at (-0.5, -0.5)!</em> Yup. If we started at 0.5, there'd be half a tile gap in our geometry around the edge of the screen. Even if a wall went all the way to the edge of the screen, we could push a narrow box between the wall and the edge. So we want to sample and extra tile out, and then we'll clamp the data in the next step.
+<em>But we start at (-0.5, -0.5)!</em> Yup. If we started at 0.5, there'd be half a tile gap in our geometry around the edge of the screen. Even if a wall went all the way to the edge of the screen, we could push a narrow box between the wall and the edge. So we want to sample an extra tile out, and then we'll clamp the data in the next step.
 </p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#236e25;">// Create a sampler using a block that samples the tilemap in tile coordinates.<br />
@@ -305,7 +305,7 @@ First, we clamp the point vector to deal with the border of the map. In the even
 </div>
 
 <p>
-This is the rest of the sampling function! We truncate our sampling points; the tile that has a center at (3.5f, 2.5f) is stored in our tilemap just as (3, 2). So after we flip things upside down (no one ever agrees if y=0 is on the top or bottom...) we look up the tile in the _meta layer to see if we have marked it "Collidable". This is how we painted our tiles in the Tiled editor. Finally, if it's collidable, we return 1.0, otherwise we return 0.0.
+This is the rest of the sampling function! First, we truncate our sampling points; the tile centered at (3.5f, 2.5f) is stored in our tilemap just as (3, 2). So after we flip things upside down (no one ever agrees if y=0 is on the top or bottom...) we look up the tile in the _meta layer to see if we have marked it "Collidable". This is how we painted our tiles in the Tiled editor. Finally, if it's collidable, we return 1.0, otherwise we return 0.0.
 </p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;ChipmunkPolylineSet * polylines = [sampler <span style="color:#6c0540;">march:</span>sampleRect <span style="color:#6c0540;">xSamples:</span>tileCountH + <span style="color:#0000ff;">2</span> <span style="color:#6c0540;">ySamples:</span>tileCountH + <span style="color:#0000ff;">2</span> <span style="color:#6c0540;">hard:</span>TRUE];<br />
@@ -319,13 +319,13 @@ Here's where the magic happens! The <strong>march</strong> function on the sampl
 &nbsp;&nbsp;&nbsp;&nbsp;cpFloat tileH = _tileMap.tileSize.height;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">for</span>(ChipmunkPolyline * line in polylines){</div>
 <p>
-And our work is almost over. Our march function returns a ChipmunkPolylineSet. So we loop over each polyline in that set.
+And our work is almost over. Our march function returns a ChipmunkPolylineSet. So we loop over each polyline in that set, and each polyline is just a list of connected line segments.
 </p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChipmunkPolyline * simplified = [line <span style="color:#6c0540;">simplifyCurves:</span><span style="color:#0000ff;">0.0f</span>];<br />
 &nbsp;</div>
 <p>
-Then we use the simplifyCurves method to remove redundant points. Since we supply 0.0f as an argument, there's no fuzz factor. The lines are removed losslessly, with no changes in geometry. Because the initial polyline contains every segment created by the marching squares algorithm, we've got a lot of short segments that this will collapse into longer ones.
+Then we use the simplifyCurves method to remove redundant points. Since we supply 0.0f as an argument, there's no "fuzz" factor. The lines are removed losslessly, with no changes in geometry. Because the initial polyline contains every segment created by the marching squares algorithm, we've got a lot of short segments that this will collapse into longer ones.
 </p>
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">for</span>(<span style="color:#881350;">int</span> i=<span style="color:#0000ff;">0</span>; i&lt;simplified.count-<span style="color:#0000ff;">1</span>; i++){<br />
@@ -394,11 +394,11 @@ Since this is a top-down game, we need to fake friction with the "ground" that t
 Linear friction is basically what we want to simulate to make something that is moving in a straight line slow down. The maxForce basically controls how quickly the object slows down- how much force can be applied each frame until it reaches the same speed as the static body (which is zero). We set the maxBias, which we discussed briefly above. Recall that maxBias limits the maximum speed at which a joint can be corrected. For this joint, "correcting the joint" at a certain maxBias means how quickly Chipmunk will try to make the anchors move back to overlap. Because we've set the maxBias to zero, it doesn't try to correct these positions, and it ignores the fact that you are stretching the joint out. It only operates on the velocity.
 </p>
 <p>
-Angular friction is simulated to make a rotating object slowly stop rotating. Gear joints govern rotation, so we've chosen to use that. Here we set the maxBias and maxForce just like above.
+Angular friction is simulated to make a rotating object slowly stop rotating. Gear joints govern rotation, so we've chosen to use that. Here we set the maxBias and maxForce just like above. By using a gear joint with a gear ratio of 1.0, you are asking Chipmunk to try and make the objects spin at the same speed. In this case, just 0.
 </p>
 <h2>Conclusion</h2>
 <p>
-That's it! We've covered a few advanced topics, like good ways to deal with friction in a top down game, and how to use Chipmunk's Autogeometry code. If you have questions, comments, or suggestions regarding this tutorial, feel free to email us at admin at howlingmoonsoftware.com. Also consider checking out the <A href="chipmunk-physics.net/forum/">Chipmunk Forum</A>.
+That's it! We've covered a few advanced topics, like good ways to deal with friction in a top down game, and how to use Chipmunk's Autogeometry code in a tile based game. If you have questions, comments, or suggestions regarding this tutorial, feel free to email us at admin at howlingmoonsoftware.com. Also consider checking out the <A href="chipmunk-physics.net/forum/">Chipmunk Forum</A>.
 </p>
 
 	</body>
