@@ -347,11 +347,23 @@ This is the rest of the sampling function! First, we truncate our sampling point
 
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;ChipmunkPolylineSet * polylines = [sampler <span style="color:#6c0540;">march:</span>sampleRect <span style="color:#6c0540;">xSamples:</span>tileCountH + <span style="color:#0000ff;">2</span> <span style="color:#6c0540;">ySamples:</span>tileCountH + <span style="color:#0000ff;">2</span> <span style="color:#6c0540;">hard:</span>TRUE];<br />
 </div>
-
 <p>
 Here's where the magic happens! The <code>march</code> function on the sampler we created takes the sampleRect as an argument. It will run it's algorithm on each tile in the sampleRect. It will do xSamples across the x-axis, and because the sampleRect is tileCountW + 2 tiles wide (remember we added one on the left and right edge), each sample will fall right in the center of each tile. Same for the y-axis. 
-<strong>TODO: Add a diagram of this!</strong>
 </p>
+
+<div style="float:right; border-style:solid; border-width:1px; margin:15px;">
+<p>Let's review with a diagram!</p>
+<center><A href="images/marchExplanation.png"><img src="images/marchExplanation.png"></A></center>
+<p>
+The dark and light background squares represent unwalkable and walkable tiles in our tilemap. The red circles show where we are sampling— the middle of the tiles. The sampler examines 4 points at a time when it creates geometry. So let's examine the four points connected by red dotted lines. Since it detects a transition from a walkable tile to a non-walkable tile, it places geometry halfway between the two points. The hard marching mode always places geometry halfway between points and also axis-aligns the geometry. This is exactly what we want in a tile-based game. Non-hard mode would round the edges. </p>
+
+<p>
+Also note how there's no geometry on the outer half tile of the example. That's why we do extra work to clamp extra geometry around the border, making sure our collision geometry extends an extra tile to the edge of the map.
+</p>
+</div>
+
+<p>Back to business.</p>
+
 <div style="text-align:left;color:#000000; background-color:#ffffff; border:solid black 1px; padding:0.5em 1em 0.5em 1em; overflow:auto;font-size:small; font-family:monospace; ">&nbsp;&nbsp;&nbsp;&nbsp;cpFloat tileW = _tileMap.tileSize.width;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;cpFloat tileH = _tileMap.tileSize.height;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#881350;">for</span>(ChipmunkPolyline * line in polylines){</div>
