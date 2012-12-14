@@ -177,8 +177,7 @@ CGPoint _lastTouchLocation;
     // and the number of samples in each direction to make which is tileCountW + 2 (because of the two extra samples at the edge).
     ChipmunkPolylineSet * polylines = [sampler march:sampleRect xSamples:tileCountW + 2 ySamples:tileCountH + 2 hard:TRUE];
     
-    cpFloat tileW = _tileMap.tileSize.width;
-    cpFloat tileH = _tileMap.tileSize.height;
+    cpFloat tileSize = _tileMap.tileSize.height;
     
     for(ChipmunkPolyline * line in polylines){
         // Each polyline represents a chain of segments or a loop of segments found in the tileset.
@@ -191,7 +190,7 @@ CGPoint _lastTouchLocation;
             
             // The sampler coordinates were in tile coordinates.
             // Convert them to pixel coordinates by multiplying by the tile size.
-            cpFloat tileSize = tileH; // fortunately our tiles are square, otherwise we'd need to multiply components independently
+            // fortunately our tiles are square, otherwise we'd need to multiply components independently
             cpVect a = cpvmult(simplified.verts[  i], tileSize);
             cpVect b = cpvmult(simplified.verts[i+1], tileSize);
             
